@@ -1,8 +1,3 @@
-<head>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-</head>
-
 <div class="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8" x-data="docenteTable()">
     <!-- Notificaciones -->
     @if (session('success'))
@@ -86,11 +81,11 @@
                                 <div class="flex justify-end space-x-2">
                                     <!-- Botón Editar -->
                                     <button @click="openModalEdit({{ $docente->id }},
-                                                                    '{{ addslashes($docente->nombres) }}',
-                                                                    '{{ addslashes($docente->apellidos) }}',
-                                                                    '{{ addslashes($docente->email) }}',
-                                                                    '{{ addslashes($docente->tipo_documento) }}',
-                                                                    '{{ addslashes($docente->numero_documento) }}')"
+                                                                        '{{ addslashes($docente->nombres) }}',
+                                                                        '{{ addslashes($docente->apellidos) }}',
+                                                                        '{{ addslashes($docente->email) }}',
+                                                                        '{{ addslashes($docente->tipo_documento) }}',
+                                                                        '{{ addslashes($docente->numero_documento) }}')"
                                         class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
                                         title="Editar docente">
                                         <i class="fas fa-edit"></i>

@@ -5,6 +5,7 @@
     @include('partials.head')
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -129,7 +130,8 @@
                     <div>
                         <div
                             class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('dashboard') ? 'text-blue-700 dark:text-blue-400' : '' }}">
-                            {{ __('Horario') }}</div>
+                            {{ __('Horario') }}
+                        </div>
                     </div>
                 </a>
 
@@ -144,7 +146,24 @@
                     <div>
                         <div
                             class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('admin.docente.index') ? 'text-blue-700 dark:text-blue-400' : '' }}">
-                            {{ __('Docente') }}</div>
+                            {{ __('Docente') }}
+                        </div>
+                    </div>
+                </a>
+
+                <!-- Programa de Estudios -->
+                <a href="{{ route('admin.programa-estudio.index') }}"
+                    class="w-full text-left px-3 py-3 rounded flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group focus:outline-none focus:ring-2 focus:ring-blue-500 {{ request()->routeIs('admin.programa-estudio.index') ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : '' }}"
+                    wire:navigate>
+                    <div
+                        class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition {{ request()->routeIs('admin.programa-estudio.index') ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' : '' }}">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <div>
+                        <div
+                            class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('admin.programa-estudio.index') ? 'text-blue-700 dark:text-blue-400' : '' }}">
+                            {{ __('Programa de Estudios') }}
+                        </div>
                     </div>
                 </a>
             </div>
@@ -160,7 +179,8 @@
                     <div>
                         <div
                             class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400">
-                            {{ __('Repository') }}</div>
+                            {{ __('Repository') }}
+                        </div>
                     </div>
                 </a>
 
@@ -173,7 +193,8 @@
                     <div>
                         <div
                             class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400">
-                            {{ __('Documentation') }}</div>
+                            {{ __('Documentation') }}
+                        </div>
                     </div>
                 </a>
             </div>

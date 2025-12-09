@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DocenteController;
+use App\Http\Controllers\Admin\ProgramaEstudioController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -36,6 +37,10 @@ Route::prefix('admin')->group(function () {
     Route::resource('docente', DocenteController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.docente');
+
+    Route::resource('programa-estudio', ProgramaEstudioController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names('admin.programa-estudio');
 
     Route::get('docente/consultar-dni', [DocenteController::class, 'consultarDni'])
         ->name('admin.docente.consultar-dni');
