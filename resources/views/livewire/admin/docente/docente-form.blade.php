@@ -114,18 +114,7 @@
             const dni = $('#numero_documento').val();
             const tipoDocumento = $('#tipo_documento').val();
             if (!dni.match(/^\d{8}$/)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'El número de documento debe tener 8 dígitos',
-                    background: '#18181b',
-                    color: '#f4f4f5',
-                    iconColor: '#ef4444',
-                    confirmButtonColor: '#3b82f6',
-                    customClass: {
-                        popup: 'rounded-lg shadow-lg'
-                    }
-                });
+                SwalThemed.error('Error', 'El número de documento debe tener 8 dígitos');
                 return;
             }
 
@@ -141,18 +130,7 @@
                 },
                 success: function (data) {
                     if (data.error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.error,
-                            background: '#18181b',
-                            color: '#f4f4f5',
-                            iconColor: '#ef4444',
-                            confirmButtonColor: '#3b82f6',
-                            customClass: {
-                                popup: 'rounded-lg shadow-lg'
-                            }
-                        });
+                        SwalThemed.error('Error', data.error);
                     } else {
                         $('#nombres').val(data.nombres || '');
                         $('#apellidos').val(data.apellidos || '');
@@ -163,34 +141,12 @@
                                 'Advertencia: El campo apellidos está vacío o no se recibió correctamente'
                             );
                         }
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'Datos del documento obtenidos correctamente',
-                            background: '#18181b',
-                            color: '#f4f4f5',
-                            iconColor: '#22c55e',
-                            confirmButtonColor: '#3b82f6',
-                            customClass: {
-                                popup: 'rounded-lg shadow-lg'
-                            }
-                        });
+                        SwalThemed.success('¡Éxito!', 'Datos del documento obtenidos correctamente');
                     }
                 },
                 error: function (xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al consultar el documento: ' + (xhr.responseJSON
-                            ?.error || 'No se pudo conectar con la API'),
-                        background: '#18181b',
-                        color: '#f4f4f5',
-                        iconColor: '#ef4444',
-                        confirmButtonColor: '#3b82f6',
-                        customClass: {
-                            popup: 'rounded-lg shadow-lg'
-                        }
-                    });
+                    SwalThemed.error('Error', 'Error al consultar el documento: ' + (xhr.responseJSON
+                        ?.error || 'No se pudo conectar con la API'));
                 }
             });
         });

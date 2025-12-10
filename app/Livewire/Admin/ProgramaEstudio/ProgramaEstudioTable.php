@@ -9,7 +9,11 @@ class ProgramaEstudioTable extends Component
 {
     public function render()
     {
-        $programas = ProgramaEstudio::orderBy('created_at', 'desc')
+        $programas = ProgramaEstudio::with([
+            'modulos' => function ($query) {
+                $query->orderBy('numero_modulo', 'asc');
+            }
+        ])->orderBy('created_at', 'desc')
             ->paginate(10);
 
         return view('livewire.admin.programa-estudio.programa-estudio-table', compact('programas'));

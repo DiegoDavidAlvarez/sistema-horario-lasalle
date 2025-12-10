@@ -1,40 +1,23 @@
 <div class="w-full py-8 px-4 sm:px-6 lg:px-8">
     @if (session('success'))
         <script>
-            Swal.fire({
-                icon: "success",
-                title: "¡Éxito!",
-                text: "{{ session('success') }}",
-                background: '#18181b',
-                color: '#f4f4f5',
-                iconColor: '#22c55e',
-                confirmButtonColor: '#3b82f6',
-                customClass: {
-                    popup: 'rounded-lg shadow-lg'
-                }
-            });
+            SwalThemed.success("¡Éxito!", "{{ session('success') }}");
         </script>
     @endif
 
     @if ($errors->any())
         <script>
-            Swal.fire({
+            SwalThemed.fire({
                 icon: 'error',
                 title: 'Error',
                 html: '<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
-                background: '#18181b',
-                color: '#f4f4f5',
-                iconColor: '#ef4444',
-                confirmButtonColor: '#3b82f6',
-                customClass: {
-                    popup: 'rounded-lg shadow-lg text-left'
-                }
+                iconColor: '#ef4444'
             });
         </script>
     @endif
 
     <div
-        class="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
+        class="w-full bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
         <div class="p-6">
             <h3 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-6">Agregar Programa de Estudios</h3>
 

@@ -42,6 +42,10 @@ Route::prefix('admin')->group(function () {
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.programa-estudio');
 
+    Route::resource('modulos', \App\Http\Controllers\Admin\ModuloController::class)
+        ->only(['store', 'update', 'destroy'])
+        ->names('admin.modulos');
+
     Route::get('docente/consultar-dni', [DocenteController::class, 'consultarDni'])
         ->name('admin.docente.consultar-dni');
 });

@@ -6,6 +6,83 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        // Configuración de SweetAlert con tema dinámico
+        function getSwalTheme() {
+            const isDark = document.documentElement.classList.contains('dark');
+            return {
+                background: isDark ? '#1e293b' : '#ffffff',
+                color: isDark ? '#f1f5f9' : '#1e293b',
+                confirmButtonColor: '#3b82f6',
+                cancelButtonColor: isDark ? '#64748b' : '#94a3b8',
+                customClass: {
+                    popup: isDark
+                        ? 'rounded-xl shadow-2xl border border-slate-600'
+                        : 'rounded-xl shadow-2xl border border-slate-200'
+                }
+            };
+        }
+
+        // SweetAlert con tema - uso: SwalThemed.fire({...})
+        const SwalThemed = {
+            fire: function (options) {
+                const theme = getSwalTheme();
+                return Swal.fire({
+                    ...theme,
+                    ...options,
+                    customClass: {
+                        ...theme.customClass,
+                        ...(options.customClass || {})
+                    }
+                });
+            },
+            success: function (title, text) {
+                const theme = getSwalTheme();
+                const isDark = document.documentElement.classList.contains('dark');
+                return Swal.fire({
+                    ...theme,
+                    icon: 'success',
+                    title: title,
+                    text: text,
+                    iconColor: '#22c55e'
+                });
+            },
+            error: function (title, text) {
+                const theme = getSwalTheme();
+                return Swal.fire({
+                    ...theme,
+                    icon: 'error',
+                    title: title,
+                    text: text,
+                    iconColor: '#ef4444'
+                });
+            },
+            warning: function (title, text) {
+                const theme = getSwalTheme();
+                return Swal.fire({
+                    ...theme,
+                    icon: 'warning',
+                    title: title,
+                    text: text,
+                    iconColor: '#f59e0b'
+                });
+            },
+            confirm: function (title, text, confirmText = 'Sí, eliminar', cancelText = 'Cancelar') {
+                const theme = getSwalTheme();
+                return Swal.fire({
+                    ...theme,
+                    icon: 'warning',
+                    title: title,
+                    text: text,
+                    iconColor: '#f59e0b',
+                    showCancelButton: true,
+                    confirmButtonColor: '#ef4444',
+                    confirmButtonText: confirmText,
+                    cancelButtonText: cancelText
+                });
+            }
+        };
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
@@ -34,9 +111,57 @@
             height: calc(100vh - 4rem);
         }
 
-        /* Estilos personalizados para los menús Flux en el nuevo diseño */
-        .flux-menu-custom .flux-menu__item {
-            @apply flex items-center gap-2 px-2 py-1.5 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 rounded;
+        /* Estilos personalizados para los menús de usuario */
+        [data-flux-menu] {
+            background: white !important;
+            border: 1px solid #e2e8f0 !important;
+            border-radius: 0.75rem !important;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04) !important;
+        }
+
+        .dark [data-flux-menu] {
+            background: #1e293b !important;
+            border-color: #475569 !important;
+        }
+
+        /* Estilos para items del menú */
+        [data-flux-menu-item] {
+            color: #334155 !important;
+            transition: all 0.15s ease !important;
+        }
+
+        [data-flux-menu-item]:hover {
+            background: #f1f5f9 !important;
+            color: #1e293b !important;
+        }
+
+        .dark [data-flux-menu-item] {
+            color: #cbd5e1 !important;
+        }
+
+        .dark [data-flux-menu-item]:hover {
+            background: #334155 !important;
+            color: #f1f5f9 !important;
+        }
+
+        /* Separadores del menú */
+        [data-flux-separator] {
+            border-color: #e2e8f0 !important;
+        }
+
+        .dark [data-flux-separator] {
+            border-color: #475569 !important;
+        }
+
+        /* Botón de cerrar sesión con efecto rojo */
+        .logout-item:hover {
+            background: #fef2f2 !important;
+            color: #dc2626 !important;
+        }
+
+        .dark .logout-item:hover {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #f87171 !important;
         }
     </style>
 </head>
@@ -59,22 +184,24 @@
             <flux:dropdown position="top" align="end" class="lg:hidden">
                 <flux:profile :initials="auth()->user()->initials()" icon-trailing="chevron-down" />
 
-                <flux:menu class="flux-menu-custom">
+                <flux:menu class="w-[220px]">
                     <flux:menu.radio.group>
-                        <div class="p-0 text-sm font-normal">
-                            <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                        <div class="p-3">
+                            <div class="flex items-center gap-3">
+                                <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-xl">
                                     <span
-                                        class="flex h-full w-full items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-black dark:text-white">
+                                        class="flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
                                         {{ auth()->user()->initials() }}
                                     </span>
                                 </span>
 
-                                <div class="grid flex-1 text-start text-sm leading-tight">
-                                    <span
-                                        class="truncate font-semibold text-slate-800 dark:text-slate-200">{{ auth()->user()->name }}</span>
-                                    <span
-                                        class="truncate text-xs text-slate-600 dark:text-slate-400">{{ auth()->user()->email }}</span>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                                        {{ auth()->user()->name }}
+                                    </p>
+                                    <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                        {{ auth()->user()->email }}
+                                    </p>
                                 </div>
                             </div>
                         </div>
@@ -83,7 +210,8 @@
                     <flux:menu.separator />
 
                     <flux:menu.radio.group>
-                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
+                        <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                            {{ __('Settings') }}
                         </flux:menu.item>
                     </flux:menu.radio.group>
 
@@ -91,8 +219,8 @@
 
                     <form method="POST" action="{{ route('logout') }}" class="w-full">
                         @csrf
-                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle" class="w-full"
-                            data-test="logout-button">
+                        <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle"
+                            class="w-full logout-item" data-test="logout-button">
                             {{ __('Log Out') }}
                         </flux:menu.item>
                     </form>
@@ -207,22 +335,24 @@
                             icon:trailing="chevrons-up-down" data-test="sidebar-menu-button" class="w-full" />
                     </div>
 
-                    <flux:menu class="w-[220px] flux-menu-custom">
+                    <flux:menu class="w-[240px]">
                         <flux:menu.radio.group>
-                            <div class="p-0 text-sm font-normal">
-                                <div class="flex items-center gap-2 px-1 py-1.5 text-start text-sm">
-                                    <span class="relative flex h-8 w-8 shrink-0 overflow-hidden rounded-lg">
+                            <div class="p-3">
+                                <div class="flex items-center gap-3">
+                                    <span class="relative flex h-10 w-10 shrink-0 overflow-hidden rounded-xl">
                                         <span
-                                            class="flex h-full w-full items-center justify-center rounded-lg bg-slate-200 dark:bg-slate-700 text-black dark:text-white">
+                                            class="flex h-full w-full items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 to-blue-600 text-white font-semibold text-sm">
                                             {{ auth()->user()->initials() }}
                                         </span>
                                     </span>
 
-                                    <div class="grid flex-1 text-start text-sm leading-tight">
-                                        <span
-                                            class="truncate font-semibold text-slate-800 dark:text-slate-200">{{ auth()->user()->name }}</span>
-                                        <span
-                                            class="truncate text-xs text-slate-600 dark:text-slate-400">{{ auth()->user()->email }}</span>
+                                    <div class="flex-1 min-w-0">
+                                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100 truncate">
+                                            {{ auth()->user()->name }}
+                                        </p>
+                                        <p class="text-xs text-slate-500 dark:text-slate-400 truncate">
+                                            {{ auth()->user()->email }}
+                                        </p>
                                     </div>
                                 </div>
                             </div>
@@ -231,7 +361,8 @@
                         <flux:menu.separator />
 
                         <flux:menu.radio.group>
-                            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>{{ __('Settings') }}
+                            <flux:menu.item :href="route('profile.edit')" icon="cog" wire:navigate>
+                                {{ __('Settings') }}
                             </flux:menu.item>
                         </flux:menu.radio.group>
 
@@ -240,7 +371,7 @@
                         <form method="POST" action="{{ route('logout') }}" class="w-full">
                             @csrf
                             <flux:menu.item as="button" type="submit" icon="arrow-right-start-on-rectangle"
-                                class="w-full" data-test="logout-button">
+                                class="w-full logout-item" data-test="logout-button">
                                 {{ __('Log Out') }}
                             </flux:menu.item>
                         </form>

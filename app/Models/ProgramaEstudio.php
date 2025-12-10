@@ -9,11 +9,16 @@ class ProgramaEstudio extends Model
 {
     use HasFactory;
 
-    // Especificar el nombre exacto de la tabla
     protected $table = 'programas_estudio';
 
     protected $fillable = [
         'nombre',
         'abreviatura'
     ];
+
+    // Relación con módulos
+    public function modulos()
+    {
+        return $this->hasMany(Modulo::class, 'programa_estudio_id');
+    }
 }

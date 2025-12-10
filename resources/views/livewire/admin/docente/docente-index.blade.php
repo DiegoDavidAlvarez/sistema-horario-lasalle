@@ -2,34 +2,17 @@
     <!-- Notificaciones -->
     @if (session('success'))
         <script>
-            Swal.fire({
-                icon: "success",
-                title: "¡Éxito!",
-                text: "{{ session('success') }}",
-                background: '#f8fafc',
-                color: '#1e293b',
-                iconColor: '#22c55e',
-                confirmButtonColor: '#3b82f6',
-                customClass: {
-                    popup: 'rounded-lg shadow-lg dark:bg-slate-800 dark:text-slate-200'
-                }
-            });
+            SwalThemed.success("¡Éxito!", "{{ session('success') }}");
         </script>
     @endif
 
     @if ($errors->any())
         <script>
-            Swal.fire({
+            SwalThemed.fire({
                 icon: 'error',
                 title: 'Error',
                 html: '<ul>@foreach ($errors->all() as $error)<li>{{ $error }}</li>@endforeach</ul>',
-                background: '#f8fafc',
-                color: '#1e293b',
-                iconColor: '#ef4444',
-                confirmButtonColor: '#3b82f6',
-                customClass: {
-                    popup: 'rounded-lg shadow-lg dark:bg-slate-800 dark:text-slate-200 text-left'
-                }
+                iconColor: '#ef4444'
             });
         </script>
     @endif
@@ -80,12 +63,13 @@
                             <td class="p-4 text-sm text-right">
                                 <div class="flex justify-end space-x-2">
                                     <!-- Botón Editar -->
-                                    <button @click="openModalEdit({{ $docente->id }},
-                                                                        '{{ addslashes($docente->nombres) }}',
-                                                                        '{{ addslashes($docente->apellidos) }}',
-                                                                        '{{ addslashes($docente->email) }}',
-                                                                        '{{ addslashes($docente->tipo_documento) }}',
-                                                                        '{{ addslashes($docente->numero_documento) }}')"
+                                    <button
+                                        @click="openModalEdit({{ $docente->id }},
+                                                                                '{{ addslashes($docente->nombres) }}',
+                                                                                '{{ addslashes($docente->apellidos) }}',
+                                                                                '{{ addslashes($docente->email) }}',
+                                                                                '{{ addslashes($docente->tipo_documento) }}',
+                                                                                '{{ addslashes($docente->numero_documento) }}')"
                                         class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
                                         title="Editar docente">
                                         <i class="fas fa-edit"></i>
@@ -237,22 +221,10 @@
 
 <script>
     function confirmDelete(id) {
-        Swal.fire({
-            title: '¿Eliminar docente?',
-            text: "¡No podrás revertir esto!",
-            icon: 'warning',
-            background: '#f8fafc',
-            color: '#1e293b',
-            iconColor: '#ef4444',
-            confirmButtonColor: '#3b82f6',
-            cancelButtonColor: '#6b7280',
-            showCancelButton: true,
-            confirmButtonText: 'Sí, eliminar',
-            cancelButtonText: 'Cancelar',
-            customClass: {
-                popup: 'rounded-lg shadow-lg dark:bg-slate-800 dark:text-slate-200'
-            }
-        }).then((result) => {
+        SwalThemed.confirm(
+            '¿Eliminar docente?',
+            '¡No podrás revertir esto!'
+        ).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
             }
@@ -306,18 +278,7 @@
             const tipoDocumento = $('#edit-tipo_documento').val();
 
             if (!dni || !dni.match(/^\d{8}$/)) {
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: 'El número de documento debe tener 8 dígitos',
-                    background: '#18181b',
-                    color: '#f4f4f5',
-                    iconColor: '#ef4444',
-                    confirmButtonColor: '#3b82f6',
-                    customClass: {
-                        popup: 'rounded-lg shadow-lg'
-                    }
-                });
+                SwalThemed.error('Error', 'El número de documento debe tener 8 dígitos');
                 return;
             }
 
@@ -333,50 +294,17 @@
                 },
                 success: function (data) {
                     if (data.error) {
-                        Swal.fire({
-                            icon: 'error',
-                            title: 'Error',
-                            text: data.error,
-                            background: '#18181b',
-                            color: '#f4f4f5',
-                            iconColor: '#ef4444',
-                            confirmButtonColor: '#3b82f6',
-                            customClass: {
-                                popup: 'rounded-lg shadow-lg'
-                            }
-                        });
+                        SwalThemed.error('Error', data.error);
                     } else {
                         // Actualizar campos y disparar evento input para Alpine
                         $('#edit-nombres').val(data.nombres || '').trigger('input');
                         $('#edit-apellidos').val(data.apellidos || '').trigger('input');
 
-                        Swal.fire({
-                            icon: 'success',
-                            title: '¡Éxito!',
-                            text: 'Datos del documento obtenidos correctamente',
-                            background: '#18181b',
-                            color: '#f4f4f5',
-                            iconColor: '#22c55e',
-                            confirmButtonColor: '#3b82f6',
-                            customClass: {
-                                popup: 'rounded-lg shadow-lg'
-                            }
-                        });
+                        SwalThemed.success('¡Éxito!', 'Datos del documento obtenidos correctamente');
                     }
                 },
                 error: function (xhr) {
-                    Swal.fire({
-                        icon: 'error',
-                        title: 'Error',
-                        text: 'Error al consultar el documento: ' + (xhr.responseJSON?.error || 'No se pudo conectar con la API'),
-                        background: '#18181b',
-                        color: '#f4f4f5',
-                        iconColor: '#ef4444',
-                        confirmButtonColor: '#3b82f6',
-                        customClass: {
-                            popup: 'rounded-lg shadow-lg'
-                        }
-                    });
+                    SwalThemed.error('Error', 'Error al consultar el documento: ' + (xhr.responseJSON?.error || 'No se pudo conectar con la API'));
                 }
             });
         });
