@@ -22,4 +22,9 @@ class ProgramaEstudio extends Model
     {
         return $this->hasMany(Modulo::class, 'programa_estudio_id');
     }
+
+    public function unidadesDidacticas()
+    {
+        return $this->hasMany(UnidadDidactica::class, 'programa_estudio_id');
+    }
 }

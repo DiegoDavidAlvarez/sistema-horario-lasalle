@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\DocenteController;
 use App\Http\Controllers\Admin\ModuloController;
 use App\Http\Controllers\Admin\ProgramaEstudioController;
+use App\Http\Controllers\Admin\UnidadDidacticaController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
@@ -52,6 +53,12 @@ Route::prefix('admin')->group(function () {
     Route::resource('modulos', ModuloController::class)
         ->only(['store', 'update', 'destroy'])
         ->names('admin.modulos');
+
+    Route::resource('unidad-didactica', UnidadDidacticaController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names('admin.unidad-didactica');
+    Route::put('unidad-didactica/{id}/restore', [UnidadDidacticaController::class, 'restore'])
+        ->name('admin.unidad-didactica.restore');
 
 
 });

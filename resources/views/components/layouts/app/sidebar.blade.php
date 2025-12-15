@@ -299,6 +299,22 @@
                         </div>
                     </div>
                 </a>
+
+                <!-- Unidades Didácticas -->
+                <a href="{{ route('admin.unidad-didactica.index') }}"
+                    class="w-full text-left px-3 py-3 rounded flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group focus:outline-none focus:ring-2 focus:ring-blue-500 {{ request()->routeIs('admin.unidad-didactica.index') ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : '' }}"
+                    wire:navigate>
+                    <div
+                        class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition {{ request()->routeIs('admin.unidad-didactica.index') ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' : '' }}">
+                        <i class="fa-solid fa-book-open"></i>
+                    </div>
+                    <div>
+                        <div
+                            class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('admin.unidad-didactica.index') ? 'text-blue-700 dark:text-blue-400' : '' }}">
+                            {{ __('Unidades Didácticas') }}
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <!-- Enlaces externos -->

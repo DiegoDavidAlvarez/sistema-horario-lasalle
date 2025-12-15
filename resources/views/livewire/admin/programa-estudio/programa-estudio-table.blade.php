@@ -46,7 +46,8 @@
                 <div
                     class="bg-slate-50 dark:bg-slate-700/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 transition-all duration-200 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-500">
                     <!-- Encabezado del Programa -->
-                    <div class="p-6">
+                    <div class="p-6 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
+                        @click="toggleProgram({{ $programa->id }})">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-2">
@@ -68,7 +69,7 @@
                             </div>
 
                             <!-- Acciones del Programa -->
-                            <div class="flex gap-2">
+                            <div class="flex gap-2" @click.stop>
                                 @if ($programa->estado === 'inactivo')
                                     <form action="{{ route('admin.programa-estudio.restore', $programa->id) }}" method="POST"
                                         class="inline">
@@ -133,7 +134,7 @@
                                         Módulos ({{ $modulosCount }})
                                     </h3>
                                     <!-- Botón dinámico que muestra el siguiente número -->
-                                    <button @click="openModuleModal({{ $programa->id }}, {{ $siguienteNumero }})"
+                                    <button @click.stop="openModuleModal({{ $programa->id }}, {{ $siguienteNumero }})"
                                         class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">

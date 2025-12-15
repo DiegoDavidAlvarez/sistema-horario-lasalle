@@ -18,10 +18,10 @@
 
     <div
         class="w-full bg-white dark:bg-slate-800 rounded-xl shadow-lg overflow-hidden border border-slate-200 dark:border-slate-700">
-        <div class="p-6">
+        <form action="{{ route('admin.programa-estudio.store') }}" method="POST">
+            <div class="p-6">
             <h3 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-6">Agregar Programa de Estudios</h3>
 
-            <form action="{{ route('admin.programa-estudio.store') }}" method="POST" class="space-y-6">
                 @csrf
                 <div class="grid grid-cols-1 gap-6">
                     <!-- Campo Nombre -->
