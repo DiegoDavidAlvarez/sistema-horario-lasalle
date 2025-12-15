@@ -46,7 +46,7 @@ class DocenteController extends Controller
                 // 1. Detección de errores lógicos dentro de un 200 OK
                 // A veces la API dice OK, pero manda {"message": "DNI no encontrado"}
                 if (isset($data['message']) && !isset($data['response']) && !isset($data['nombres']) && !isset($data['first_name'])) {
-                    return response()->json(['error' => 'Respuesta API: ' . $data['message']], 404);
+                    return response()->json(['error' => 'No se encontró a la persona.'], 404);
                 }
 
                 // 2. Búsqueda flexible de datos (Soporta V1, V2 y Decolecta)
@@ -63,8 +63,8 @@ class DocenteController extends Controller
                 if (empty($nombres)) {
                     Log::error('Estructura API no reconocida', ['data' => $data]);
                     return response()->json([
-                        'error' => 'Se conectó a la API pero la respuesta no tiene el formato esperado. Revisa laravel.log.'
-                    ], 422);
+                        'error' => 'No se encontró a la persona.'
+                    ], 404);
                 }
 
                 $apellidos = trim("{$apellidoPaterno} {$apellidoMaterno}");
@@ -84,6 +84,9 @@ class DocenteController extends Controller
 
             } else {
                 // Capturar error HTTP real (401, 403, 500)
+                if ($response->status() === 404) {
+                    return response()->json(['error' => 'No se encontró a la persona.'], 404);
+                }
                 $msg = $response->json()['message'] ?? 'Error desconocido';
                 return response()->json(['error' => "Error API ({$response->status()}): {$msg}"], $response->status());
             }
@@ -120,22 +123,58 @@ class DocenteController extends Controller
     }
     public function store(Request $request)
     {
+        // 1. Validar campos básicos (quitamos unique directo)
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:docentes,email',
+            'email' => 'required|email|max:255',
             'tipo_documento' => 'required|string|in:DNI,CE|max:20',
-            'numero_documento' => 'required|string|digits:8|unique:docentes,numero_documento',
+            'numero_documento' => 'required|string|digits:8',
+            'nivel_academico' => 'nullable|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
 
         try {
             $validator->validate();
-            $docente = Docente::create([
+
+            // 2. Buscar si ya existe alguien con ese DNI o Email
+            $existingDocente = Docente::where('numero_documento', $request->numero_documento)
+                ->orWhere('email', $request->email)
+                ->first();
+
+            if ($existingDocente) {
+                // Caso A: Ya existe y está activo -> Error de validación
+                if ($existingDocente->estado === 'activo') {
+                    if ($existingDocente->numero_documento === $request->numero_documento) {
+                        return back()->withErrors(['numero_documento' => 'El número de documento ya ha sido registrado.'])->withInput();
+                    }
+                    if ($existingDocente->email === $request->email) {
+                        return back()->withErrors(['email' => 'El correo electrónico ya ha sido registrado.'])->withInput();
+                    }
+                }
+
+                // Caso B: Existe pero está inactivo -> Reactivar y actualizar
+                $existingDocente->update([
+                    'nombres' => $request->nombres,
+                    'apellidos' => $request->apellidos,
+                    'email' => $request->email,
+                    'tipo_documento' => $request->tipo_documento,
+                    'numero_documento' => $request->numero_documento,
+                    'nivel_academico' => $request->nivel_academico,
+                    'estado' => 'activo', // Reactivamos
+                ]);
+
+                return redirect()->route('admin.docente.index')
+                    ->with('success', 'El docente estaba inactivo y ha sido reactivado correctamente.');
+            }
+
+            // Caso C: No existe -> Crear nuevo
+            Docente::create([
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
                 'email' => $request->email,
                 'tipo_documento' => $request->tipo_documento,
                 'numero_documento' => $request->numero_documento,
+                'nivel_academico' => $request->nivel_academico,
             ]);
 
             return redirect()->route('admin.docente.index')
@@ -148,16 +187,46 @@ class DocenteController extends Controller
 
     public function update(Request $request, string $id)
     {
+        // 1. Validar campos básicos (quitamos unique directo)
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'email' => 'required|email|max:255|unique:docentes,email,' . $id,
+            'email' => 'required|email|max:255',
             'tipo_documento' => 'required|string|in:DNI,CE|max:20',
-            'numero_documento' => 'required|string|max:8|unique:docentes,numero_documento,' . $id,
+            'numero_documento' => 'required|string|max:8',
+            'nivel_academico' => 'nullable|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
 
         try {
             $validator->validate();
+
+            // 2. Verificar duplicados manualmente (excluyendo al usuario actual)
+            $existingDocente = Docente::where(function ($query) use ($request) {
+                $query->where('numero_documento', $request->numero_documento)
+                    ->orWhere('email', $request->email);
+            })->where('id', '!=', $id)->first();
+
+            if ($existingDocente) {
+                // Caso A: Está activo -> Error estándar
+                if ($existingDocente->estado === 'activo') {
+                    if ($existingDocente->numero_documento === $request->numero_documento) {
+                        return back()->withErrors(['numero_documento' => 'El número de documento ya ha sido registrado.'])->withInput();
+                    }
+                    if ($existingDocente->email === $request->email) {
+                        return back()->withErrors(['email' => 'El correo electrónico ya ha sido registrado.'])->withInput();
+                    }
+                }
+
+                // Caso B: Está inactivo -> Error específico solicitado
+                if ($existingDocente->estado === 'inactivo') {
+                    if ($existingDocente->numero_documento === $request->numero_documento) {
+                        return back()->withErrors(['numero_documento' => 'Este docente ya está registrado pero está inactivo.'])->withInput();
+                    }
+                    if ($existingDocente->email === $request->email) {
+                        return back()->withErrors(['email' => 'Este docente ya está registrado pero está inactivo.'])->withInput();
+                    }
+                }
+            }
 
             $docente = Docente::findOrFail($id);
 
@@ -167,6 +236,7 @@ class DocenteController extends Controller
                 'email' => $request->email,
                 'tipo_documento' => $request->tipo_documento,
                 'numero_documento' => $request->numero_documento,
+                'nivel_academico' => $request->nivel_academico,
             ]);
 
             return redirect()->route('admin.docente.index')
@@ -179,8 +249,10 @@ class DocenteController extends Controller
 
     public function destroy(string $id)
     {
-        Docente::destroy($id);
+        $docente = Docente::findOrFail($id);
+        $docente->update(['estado' => 'inactivo']);
+
         return redirect()->route('admin.docente.index')
-            ->with('success', 'El docente fue eliminado correctamente.');
+            ->with('success', 'El docente fue desactivado correctamente.');
     }
 }

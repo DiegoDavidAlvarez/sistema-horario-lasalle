@@ -84,6 +84,28 @@
                 @enderror
             </div>
 
+            <!-- Campo Nivel Académico -->
+            <div data-flux-field>
+                <label for="nivel_academico" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                    data-flux-label>
+                    Nivel Académico
+                </label>
+                <select id="nivel_academico" name="nivel_academico"
+                    class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
+                    data-flux-control>
+                    <option value="">Seleccione un nivel</option>
+                    <option value="Bachiller">Bachiller</option>
+                    <option value="Técnico">Técnico</option>
+                    <option value="Licenciado">Licenciado</option>
+                    <option value="Ingeniero">Ingeniero</option>
+                    <option value="Magister">Magister</option>
+                    <option value="Doctor">Doctor</option>
+                </select>
+                @error('nivel_academico')
+                    <p class="mt-1 text-sm text-red-500 font-medium" data-flux-component="error">{{ $message }}</p>
+                @enderror
+            </div>
+
             <!-- Campos ocultos para tipo_documento_api y digito_verificador -->
             <input type="hidden" id="tipo_documento_api" name="tipo_documento_api">
             <input type="hidden" id="digito_verificador" name="digito_verificador">
@@ -145,8 +167,8 @@
                     }
                 },
                 error: function (xhr) {
-                    SwalThemed.error('Error', 'Error al consultar el documento: ' + (xhr.responseJSON
-                        ?.error || 'No se pudo conectar con la API'));
+                    const errorMessage = xhr.responseJSON?.error || 'No se pudo conectar con la API';
+                    SwalThemed.error('Error', errorMessage);
                 }
             });
         });

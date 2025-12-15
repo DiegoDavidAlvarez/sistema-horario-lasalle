@@ -9,8 +9,8 @@ return new class extends Migration {
     {
         Schema::create('programas_estudio', function (Blueprint $table) {
             $table->id();
-            $table->string('nombre', 100);
-            $table->string('abreviatura', 20)->nullable();
+            $table->string('nombre', 100)->unique();
+            $table->string('abreviatura', 20)->unique();
             $table->timestamps();
         });
     }

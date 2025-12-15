@@ -15,8 +15,17 @@ return new class extends Migration {
             $table->string('nombres', 255);
             $table->string('apellidos', 255);
             $table->string('email', 255)->unique();
-            $table->string('tipo_documento', 20)->unique();
+            $table->string('tipo_documento', 20);
             $table->string('numero_documento', 8)->unique();
+            $table->enum('nivel_academico', [
+                'Bachiller',
+                'Técnico',
+                'Licenciado',
+                'Ingeniero',
+                'Magister',
+                'Doctor'
+            ])->nullable();
+            $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
         });
     }

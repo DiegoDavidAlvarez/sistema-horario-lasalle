@@ -10,7 +10,8 @@ class DocenteIndex extends Component
 {
     public function render()
     {
-        $docentes = Docente::orderBy('apellidos')
+        $docentes = Docente::where("estado", "activo")
+            ->orderBy('apellidos')
             ->paginate(10);
 
         return view('livewire.admin.docente.docente-index', compact('docentes'));

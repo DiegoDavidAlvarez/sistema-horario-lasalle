@@ -15,6 +15,8 @@ class Docente extends Model
         'email',
         'tipo_documento',
         'numero_documento',
+        'nivel_academico',
+        'estado',
     ];
 
     protected $casts = [

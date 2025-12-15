@@ -18,8 +18,8 @@ class ProgramaEstudioController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:100',
-            'abreviatura' => 'nullable|string|max:20',
+            'nombre' => 'required|string|max:100|unique:programas_estudio,nombre',
+            'abreviatura' => 'nullable|string|max:20|unique:programas_estudio,abreviatura',
         ]);
 
         try {
@@ -41,8 +41,8 @@ class ProgramaEstudioController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-            'nombre' => 'required|string|max:100',
-            'abreviatura' => 'nullable|string|max:20',
+            'nombre' => 'required|string|max:100|unique:programas_estudio,nombre,' . $id,
+            'abreviatura' => 'nullable|string|max:20|unique:programas_estudio,abreviatura,' . $id,
         ]);
 
         try {

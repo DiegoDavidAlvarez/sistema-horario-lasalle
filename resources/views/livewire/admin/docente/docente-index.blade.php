@@ -44,53 +44,97 @@
                         <th class="p-4 w-16 text-center border-r border-slate-700 dark:border-slate-600">#</th>
                         <th class="p-4 border-r border-slate-700 dark:border-slate-600">Nombres</th>
                         <th class="p-4 border-r border-slate-700 dark:border-slate-600">Apellidos</th>
-                        <th class="p-4 border-r border-slate-700 dark:border-slate-600">Email</th>
-                        <th class="p-4 border-r border-slate-700 dark:border-slate-600">Tipo Doc.</th>
-                        <th class="p-4 border-r border-slate-700 dark:border-slate-600">Numero Doc.</th>
+                        <th class="p-4 border-r border-slate-700 dark:border-slate-600">Nivel Académico</th>
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
                     @foreach ($docentes as $docente)
-                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300 text-center">{{ $loop->iteration }}
-                            </td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->nombres }}</td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->apellidos }}</td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->email }}</td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->tipo_documento }}</td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->numero_documento }}</td>
-                            <td class="p-4 text-sm text-right">
-                                <div class="flex justify-end space-x-2">
-                                    <!-- Botón Editar -->
-                                    <button
-                                        @click="openModalEdit({{ $docente->id }},
-                                                                                '{{ addslashes($docente->nombres) }}',
-                                                                                '{{ addslashes($docente->apellidos) }}',
-                                                                                '{{ addslashes($docente->email) }}',
-                                                                                '{{ addslashes($docente->tipo_documento) }}',
-                                                                                '{{ addslashes($docente->numero_documento) }}')"
-                                        class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
-                                        title="Editar docente">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <!-- Botón Eliminar -->
-                                    <button onclick="confirmDelete({{ $docente->id }})"
-                                        class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
-                                        title="Eliminar docente">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
+                        <tbody x-data="{ expanded: false }" class="border-b border-slate-200 dark:border-slate-700 group">
+                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
+                                @click="expanded = !expanded">
+                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300 text-center">
+                                    <div class="flex items-center justify-center gap-2">
+                                        <i class="fas fa-chevron-right text-xs text-slate-400 transition-transform duration-200"
+                                            :class="{ 'rotate-90': expanded }"></i>
+                                        {{ $loop->iteration }}
+                                    </div>
+                                </td>
+                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $docente->nombres }}
+                                </td>
+                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->apellidos }}</td>
+                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
+                                    {{ $docente->nivel_academico ?? 'No registrado' }}
+                                </td>
+                                <td class="p-4 text-sm text-right" @click.stop>
+                                    <div class="flex justify-end space-x-2">
+                                        <!-- Botón Editar -->
+                                        <button
+                                            @click="openModalEdit({{ $docente->id }},
+                                            '{{ addslashes($docente->nombres) }}',
+                                            '{{ addslashes($docente->apellidos) }}',
+                                            '{{ addslashes($docente->email) }}',
+                                            '{{ addslashes($docente->tipo_documento) }}',
+                                            '{{ addslashes($docente->numero_documento) }}',
+                                            '{{ addslashes($docente->nivel_academico) }}')"
+                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
+                                            title="Editar docente">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <!-- Botón Eliminar -->
+                                        <button onclick="confirmDelete({{ $docente->id }})"
+                                            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
+                                            title="Eliminar docente">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
 
-                                    <!-- Formulario Eliminar (oculto) -->
-                                    <form id="delete-form-{{ $docente->id }}"
-                                        action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
-                                        class="hidden">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
-                                </div>
-                            </td>
-                        </tr>
+                                        <!-- Formulario Eliminar (oculto) -->
+                                        <form id="delete-form-{{ $docente->id }}"
+                                            action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
+                                            class="hidden">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            <!-- Fila de Detalles Expandible -->
+                            <tr x-show="expanded" x-cloak x-transition:enter="transition ease-out duration-200"
+                                x-transition:enter-start="opacity-0 -translate-y-2"
+                                x-transition:enter-end="opacity-100 translate-y-0" class="bg-slate-50 dark:bg-slate-800/50">
+                                <td colspan="5" class="p-4 pl-12">
+                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                        <div>
+                                            <span
+                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                                Email
+                                            </span>
+                                            <span class="text-sm text-slate-700 dark:text-slate-300">
+                                                {{ $docente->email }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                                Tipo Documento
+                                            </span>
+                                            <span class="text-sm text-slate-700 dark:text-slate-300">
+                                                {{ $docente->tipo_documento }}
+                                            </span>
+                                        </div>
+                                        <div>
+                                            <span
+                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                                Número Documento
+                                            </span>
+                                            <span class="text-sm text-slate-700 dark:text-slate-300 font-mono">
+                                                {{ $docente->numero_documento }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
                     @endforeach
                 </tbody>
             </table>
@@ -165,12 +209,28 @@
                                 </select>
                             </div>
 
+                            <!-- Campo Nivel Académico -->
+                            <div class="mb-4">
+                                <label
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nivel Académico</label>
+                                <select x-model="currentNivelAcademico" name="nivel_academico"
+                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                    <option value="">Seleccione Nivel Académico</option>
+                                    <option value="Bachiller">Bachiller</option>
+                                    <option value="Técnico">Técnico</option>
+                                    <option value="Licenciado">Licenciado</option>
+                                    <option value="Ingeniero">Ingeniero</option>
+                                    <option value="Magister">Magister</option>
+                                    <option value="Doctor">Doctor</option>
+                                </select>
+                            </div>
+
                             <!-- Campo DNI -->
                             <div class="mb-4">
                                 <label
                                     class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">DNI</label>
                                 <div class="flex gap-2">
-                                    <input type="text" x-model="currentDni" name="dni" id="edit-dni"
+                                    <input type="text" x-model="currentDni" name="numero_documento" id="edit-dni"
                                         class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                                         required pattern="\d{8}" maxlength="8"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')">
@@ -242,14 +302,16 @@
             currentEmail: '',
             currentTipoDocumento: '',
             currentDni: '',
+            currentNivelAcademico: '',
 
-            openModalEdit(id, nombres, apellidos, email, tipo_documento, dni) {
+            openModalEdit(id, nombres, apellidos, email, tipo_documento, dni, nivel_academico) {
                 this.currentId = id;
                 this.currentNombres = nombres;
                 this.currentApellidos = apellidos;
                 this.currentEmail = email;
                 this.currentTipoDocumento = tipo_documento;
                 this.currentDni = dni;
+                this.currentNivelAcademico = nivel_academico;
                 this.isEditOpen = true;
                 document.body.classList.add('overflow-hidden');
             },
