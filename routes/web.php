@@ -38,10 +38,13 @@ Route::prefix('admin')->group(function () {
     Route::resource('docente', DocenteController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.docente');
+    Route::get('docente/consultar-dni', [DocenteController::class, 'consultarDni'])
+        ->name('admin.docente.consultar-dni');
+    Route::put('docente/{id}/restore', [DocenteController::class, 'restore'])
+        ->name('admin.docente.restore');
 
     Route::put('programa-estudio/{id}/restore', [ProgramaEstudioController::class, 'restore'])
         ->name('admin.programa-estudio.restore');
-
     Route::resource('programa-estudio', ProgramaEstudioController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.programa-estudio');
@@ -50,9 +53,5 @@ Route::prefix('admin')->group(function () {
         ->only(['store', 'update', 'destroy'])
         ->names('admin.modulos');
 
-    Route::get('docente/consultar-dni', [DocenteController::class, 'consultarDni'])
-        ->name('admin.docente.consultar-dni');
 
-    Route::put('docente/{id}/restore', [DocenteController::class, 'restore'])
-        ->name('admin.docente.restore');
 });
