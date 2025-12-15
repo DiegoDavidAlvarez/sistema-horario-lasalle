@@ -11,6 +11,7 @@ return new class extends Migration {
             $table->id();
             $table->string('nombre', 100)->unique();
             $table->string('abreviatura', 20)->unique();
+            $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
         });
     }

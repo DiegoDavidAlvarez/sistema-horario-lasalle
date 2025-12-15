@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\DocenteController;
+use App\Http\Controllers\Admin\ModuloController;
 use App\Http\Controllers\Admin\ProgramaEstudioController;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -38,14 +39,20 @@ Route::prefix('admin')->group(function () {
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.docente');
 
+    Route::put('programa-estudio/{id}/restore', [ProgramaEstudioController::class, 'restore'])
+        ->name('admin.programa-estudio.restore');
+
     Route::resource('programa-estudio', ProgramaEstudioController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.programa-estudio');
 
-    Route::resource('modulos', \App\Http\Controllers\Admin\ModuloController::class)
+    Route::resource('modulos', ModuloController::class)
         ->only(['store', 'update', 'destroy'])
         ->names('admin.modulos');
 
     Route::get('docente/consultar-dni', [DocenteController::class, 'consultarDni'])
         ->name('admin.docente.consultar-dni');
+
+    Route::put('docente/{id}/restore', [DocenteController::class, 'restore'])
+        ->name('admin.docente.restore');
 });

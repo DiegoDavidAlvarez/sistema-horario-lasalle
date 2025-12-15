@@ -20,17 +20,26 @@
     <!-- Contenedor Principal -->
     <div
         class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-        <!-- Encabezado -->
-        <div class="flex justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700">
-            <div>
-                <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-200">
-                    Lista de Docentes
-                </h1>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de información docente del sistema
-                </p>
+        <!-- Filtros y Botones -->
+        <div class="flex flex-col sm:flex-row justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700 gap-4">
+            <div class="flex items-center gap-4 w-full sm:w-auto">
+                <div>
+                    <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-200">
+                        Lista de Docentes
+                    </h1>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de información docente del sistema
+                    </p>
+                </div>
+                <!-- Filtro de Estado -->
+                <select wire:model.live="estadoFilter"
+                    class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500">
+                    <option value="activo">Activos</option>
+                    <option value="inactivo">Inactivos</option>
+                    <option value="todos">Todos</option>
+                </select>
             </div>
             <button @click="openModalCreate()"
-                class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm">
+                class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm w-full sm:w-auto justify-center">
                 <i class="fas fa-plus"></i>
                 Agregar docente
             </button>
@@ -45,6 +54,7 @@
                         <th class="p-4 border-r border-slate-700 dark:border-slate-600">Nombres</th>
                         <th class="p-4 border-r border-slate-700 dark:border-slate-600">Apellidos</th>
                         <th class="p-4 border-r border-slate-700 dark:border-slate-600">Nivel Académico</th>
+                        <th class="p-4 border-r border-slate-700 dark:border-slate-600">Estado</th>
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
@@ -66,37 +76,59 @@
                                 <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
                                     {{ $docente->nivel_academico ?? 'No registrado' }}
                                 </td>
+                                <td class="p-4 text-sm">
+                                    <span
+                                        class="px-2 py-1 rounded-full text-xs font-semibold
+                                    {{ $docente->estado === 'activo' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                        {{ ucfirst($docente->estado) }}
+                                    </span>
+                                </td>
                                 <td class="p-4 text-sm text-right" @click.stop>
                                     <div class="flex justify-end space-x-2">
-                                        <!-- Botón Editar -->
-                                        <button
-                                            @click="openModalEdit({{ $docente->id }},
+                                        @if ($docente->estado === 'inactivo')
+                                            <!-- Botón Restaurar -->
+                                            <form action="{{ route('admin.docente.restore', $docente->id) }}" method="POST"
+                                                class="inline">
+                                                @csrf
+                                                @method('PUT')
+                                                <button type="submit"
+                                                    class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/50 transition-colors"
+                                                    title="Restaurar docente">
+                                                    <i class="fas fa-trash-restore-alt"></i>
+                                                </button>
+                                            </form>
+                                        @else
+                                            <!-- Botón Editar -->
+                                            <button
+                                                @click="openModalEdit({{ $docente->id }},
                                             '{{ addslashes($docente->nombres) }}',
                                             '{{ addslashes($docente->apellidos) }}',
                                             '{{ addslashes($docente->email) }}',
                                             '{{ addslashes($docente->tipo_documento) }}',
                                             '{{ addslashes($docente->numero_documento) }}',
                                             '{{ addslashes($docente->nivel_academico) }}')"
-                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
-                                            title="Editar docente">
-                                            <i class="fas fa-edit"></i>
-                                        </button>
-                                        <!-- Botón Eliminar -->
-                                        <button onclick="confirmDelete({{ $docente->id }})"
-                                            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
-                                            title="Eliminar docente">
-                                            <i class="fas fa-trash"></i>
-                                        </button>
+                                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
+                                                title="Editar docente">
+                                                <i class="fas fa-edit"></i>
+                                            </button>
+                                            <!-- Botón Eliminar -->
+                                            <button onclick="confirmDelete({{ $docente->id }})"
+                                                class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
+                                                title="Eliminar docente">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
 
-                                        <!-- Formulario Eliminar (oculto) -->
-                                        <form id="delete-form-{{ $docente->id }}"
-                                            action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
-                                            class="hidden">
-                                            @csrf
-                                            @method('DELETE')
-                                        </form>
+                                            <!-- Formulario Eliminar (oculto) -->
+                                            <form id="delete-form-{{ $docente->id }}"
+                                                action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
+                                                class="hidden">
+                                                @csrf
+                                                @method('DELETE')
+                                            </form>
+                                        @endif
                                     </div>
                                 </td>
+
                             </tr>
                             <!-- Fila de Detalles Expandible -->
                             <tr x-show="expanded" x-cloak x-transition:enter="transition ease-out duration-200"

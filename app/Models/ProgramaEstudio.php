@@ -13,7 +13,8 @@ class ProgramaEstudio extends Model
 
     protected $fillable = [
         'nombre',
-        'abreviatura'
+        'abreviatura',
+        'estado'
     ];
 
     // Relación con módulos

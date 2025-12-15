@@ -28,6 +28,7 @@ class ProgramaEstudioController extends Controller
             ProgramaEstudio::create([
                 'nombre' => $request->nombre,
                 'abreviatura' => $request->abreviatura,
+                'estado' => 'activo',
             ]);
 
             return redirect()->route('admin.programa-estudio.index')
@@ -65,9 +66,18 @@ class ProgramaEstudioController extends Controller
     public function destroy(string $id)
     {
         $programa = ProgramaEstudio::findOrFail($id);
-        $programa->delete();
+        $programa->update(['estado' => 'inactivo']);
 
         return redirect()->route('admin.programa-estudio.index')
-            ->with('success', 'El programa de estudio fue eliminado correctamente.');
+            ->with('success', 'El programa de estudio fue desactivado correctamente.');
+    }
+
+    public function restore(string $id)
+    {
+        $programa = ProgramaEstudio::findOrFail($id);
+        $programa->update(['estado' => 'activo']);
+
+        return redirect()->route('admin.programa-estudio.index')
+            ->with('success', 'El programa de estudio fue restaurado correctamente.');
     }
 }

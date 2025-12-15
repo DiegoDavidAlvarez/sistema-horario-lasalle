@@ -123,51 +123,18 @@ class DocenteController extends Controller
     }
     public function store(Request $request)
     {
-        // 1. Validar campos básicos (quitamos unique directo)
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:docentes,email',
             'tipo_documento' => 'required|string|in:DNI,CE|max:20',
-            'numero_documento' => 'required|string|digits:8',
+            'numero_documento' => 'required|string|digits:8|unique:docentes,numero_documento',
             'nivel_academico' => 'nullable|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
 
         try {
             $validator->validate();
 
-            // 2. Buscar si ya existe alguien con ese DNI o Email
-            $existingDocente = Docente::where('numero_documento', $request->numero_documento)
-                ->orWhere('email', $request->email)
-                ->first();
-
-            if ($existingDocente) {
-                // Caso A: Ya existe y está activo -> Error de validación
-                if ($existingDocente->estado === 'activo') {
-                    if ($existingDocente->numero_documento === $request->numero_documento) {
-                        return back()->withErrors(['numero_documento' => 'El número de documento ya ha sido registrado.'])->withInput();
-                    }
-                    if ($existingDocente->email === $request->email) {
-                        return back()->withErrors(['email' => 'El correo electrónico ya ha sido registrado.'])->withInput();
-                    }
-                }
-
-                // Caso B: Existe pero está inactivo -> Reactivar y actualizar
-                $existingDocente->update([
-                    'nombres' => $request->nombres,
-                    'apellidos' => $request->apellidos,
-                    'email' => $request->email,
-                    'tipo_documento' => $request->tipo_documento,
-                    'numero_documento' => $request->numero_documento,
-                    'nivel_academico' => $request->nivel_academico,
-                    'estado' => 'activo', // Reactivamos
-                ]);
-
-                return redirect()->route('admin.docente.index')
-                    ->with('success', 'El docente estaba inactivo y ha sido reactivado correctamente.');
-            }
-
-            // Caso C: No existe -> Crear nuevo
             Docente::create([
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
@@ -175,6 +142,7 @@ class DocenteController extends Controller
                 'tipo_documento' => $request->tipo_documento,
                 'numero_documento' => $request->numero_documento,
                 'nivel_academico' => $request->nivel_academico,
+                'estado' => 'activo',
             ]);
 
             return redirect()->route('admin.docente.index')
@@ -187,46 +155,17 @@ class DocenteController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // 1. Validar campos básicos (quitamos unique directo)
         $validator = Validator::make($request->all(), [
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
+            'email' => 'required|email|max:255|unique:docentes,email,' . $id,
             'tipo_documento' => 'required|string|in:DNI,CE|max:20',
-            'numero_documento' => 'required|string|max:8',
+            'numero_documento' => 'required|string|max:8|unique:docentes,numero_documento,' . $id,
             'nivel_academico' => 'nullable|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
 
         try {
             $validator->validate();
-
-            // 2. Verificar duplicados manualmente (excluyendo al usuario actual)
-            $existingDocente = Docente::where(function ($query) use ($request) {
-                $query->where('numero_documento', $request->numero_documento)
-                    ->orWhere('email', $request->email);
-            })->where('id', '!=', $id)->first();
-
-            if ($existingDocente) {
-                // Caso A: Está activo -> Error estándar
-                if ($existingDocente->estado === 'activo') {
-                    if ($existingDocente->numero_documento === $request->numero_documento) {
-                        return back()->withErrors(['numero_documento' => 'El número de documento ya ha sido registrado.'])->withInput();
-                    }
-                    if ($existingDocente->email === $request->email) {
-                        return back()->withErrors(['email' => 'El correo electrónico ya ha sido registrado.'])->withInput();
-                    }
-                }
-
-                // Caso B: Está inactivo -> Error específico solicitado
-                if ($existingDocente->estado === 'inactivo') {
-                    if ($existingDocente->numero_documento === $request->numero_documento) {
-                        return back()->withErrors(['numero_documento' => 'Este docente ya está registrado pero está inactivo.'])->withInput();
-                    }
-                    if ($existingDocente->email === $request->email) {
-                        return back()->withErrors(['email' => 'Este docente ya está registrado pero está inactivo.'])->withInput();
-                    }
-                }
-            }
 
             $docente = Docente::findOrFail($id);
 
@@ -254,5 +193,14 @@ class DocenteController extends Controller
 
         return redirect()->route('admin.docente.index')
             ->with('success', 'El docente fue desactivado correctamente.');
+    }
+
+    public function restore(string $id)
+    {
+        $docente = Docente::findOrFail($id);
+        $docente->update(['estado' => 'activo']);
+
+        return redirect()->route('admin.docente.index')
+            ->with('success', 'El docente fue restaurado correctamente.');
     }
 }
