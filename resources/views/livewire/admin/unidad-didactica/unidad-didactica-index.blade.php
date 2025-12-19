@@ -42,7 +42,7 @@
         <div class="p-6 space-y-6">
             @forelse ($programas as $programa)
                 <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden"
-                     x-data="{ expanded: true }">
+                     x-data="{ expanded: false }">
                     <!-- Cabecera del Programa -->
                     <div class="p-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-600 flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                          @click="expanded = !expanded">
@@ -162,20 +162,7 @@
     </div>
 
     <!-- Modal Crear Unidad -->
-    <template x-teleport="body">
-        <div x-show="isCreateOpen" x-cloak 
-             x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
-             x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
-             class="fixed inset-0 z-50 overflow-y-auto">
-            <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="closeModals"></div>
-
-            <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700 relative z-10">
-                    @include('livewire.admin.unidad-didactica.unidad-didactica-form')
-                </div>
-            </div>
-        </div>
-    </template>
+    @include('livewire.admin.unidad-didactica.unidad-didactica-form')
 
     <!-- Modal Editar Unidad -->
     <template x-teleport="body">
