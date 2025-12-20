@@ -41,25 +41,19 @@ class DocenteController extends Controller
 
             if ($response->successful()) {
                 $data = $response->json();
-                Log::info('Respuesta API DNI:', $data); // Importante: Revisa esto en laravel.log si falla
+                Log::info('Respuesta API DNI:', $data);
 
-                // 1. Detección de errores lógicos dentro de un 200 OK
-                // A veces la API dice OK, pero manda {"message": "DNI no encontrado"}
                 if (isset($data['message']) && !isset($data['response']) && !isset($data['nombres']) && !isset($data['first_name'])) {
                     return response()->json(['error' => 'No se encontró a la persona.'], 404);
                 }
 
-                // 2. Búsqueda flexible de datos (Soporta V1, V2 y Decolecta)
-                // Prioridad: 1. Dentro de 'response', 2. En la raíz, 3. Dentro de 'data'
                 $datos = $data['response'] ?? $data['data'] ?? $data;
 
-                // 3. Mapeo de campos (inglés o español)
                 $nombres = $datos['first_name'] ?? $datos['nombres'] ?? '';
                 $apellidoPaterno = $datos['first_last_name'] ?? $datos['apellidoPaterno'] ?? $datos['apellido_paterno'] ?? '';
                 $apellidoMaterno = $datos['second_last_name'] ?? $datos['apellidoMaterno'] ?? $datos['apellido_materno'] ?? '';
                 $numero = $datos['document_number'] ?? $datos['numeroDocumento'] ?? $datos['dni'] ?? $dni;
 
-                // Validación final: Si no pudimos rescatar ni el nombre, algo salió mal
                 if (empty($nombres)) {
                     Log::error('Estructura API no reconocida', ['data' => $data]);
                     return response()->json([
@@ -69,7 +63,6 @@ class DocenteController extends Controller
 
                 $apellidos = trim("{$apellidoPaterno} {$apellidoMaterno}");
 
-                // Fallback por si la API da el nombre completo en un solo campo
                 if (empty($apellidos) && isset($datos['apellidos'])) {
                     $apellidos = $datos['apellidos'];
                 }
@@ -83,7 +76,6 @@ class DocenteController extends Controller
                 ]);
 
             } else {
-                // Capturar error HTTP real (401, 403, 500)
                 if ($response->status() === 404) {
                     return response()->json(['error' => 'No se encontró a la persona.'], 404);
                 }
@@ -97,30 +89,6 @@ class DocenteController extends Controller
         }
     }
 
-    private function normalizeApellidos(array $data): string
-    {
-        // Manejar diferentes estructuras de la respuesta
-        if (isset($data['apellidos']) && !empty($data['apellidos'])) {
-            return $data['apellidos'];
-        }
-
-        // Ajustar para camelCase como devuelve la API
-        $apellidoPaterno = $data['apellidoPaterno'] ?? '';
-        $apellidoMaterno = $data['apellidoMaterno'] ?? '';
-        $apellidos = trim("{$apellidoPaterno} {$apellidoMaterno}");
-
-        if (empty($apellidos)) {
-            // Intentar con otros posibles campos
-            $apellidos = $data['nombreCompleto'] ?? $data['apellido'] ?? $data['apellidos_completos'] ?? '';
-            // Si nombreCompleto está presente, extraer solo los apellidos
-            if (!empty($apellidos) && isset($data['nombres'])) {
-                $apellidos = str_replace($data['nombres'], '', $apellidos);
-                $apellidos = trim($apellidos);
-            }
-        }
-
-        return $apellidos;
-    }
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [

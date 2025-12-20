@@ -59,6 +59,4 @@ Route::prefix('admin')->group(function () {
         ->names('admin.unidad-didactica');
     Route::put('unidad-didactica/{id}/restore', [UnidadDidacticaController::class, 'restore'])
         ->name('admin.unidad-didactica.restore');
-
-
 });

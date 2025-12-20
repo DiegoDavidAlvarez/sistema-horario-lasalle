@@ -317,37 +317,6 @@
                 </a>
             </div>
 
-            <!-- Enlaces externos -->
-            <div class="p-2 space-y-1 shrink-0">
-                <a href="https://github.com/laravel/livewire-starter-kit" target="_blank"
-                    class="w-full text-left px-3 py-3 rounded flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <div
-                        class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-                        <i class="fa-solid fa-folder"></i>
-                    </div>
-                    <div>
-                        <div
-                            class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400">
-                            {{ __('Repository') }}
-                        </div>
-                    </div>
-                </a>
-
-                <a href="https://laravel.com/docs/starter-kits#livewire" target="_blank"
-                    class="w-full text-left px-3 py-3 rounded flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group focus:outline-none focus:ring-2 focus:ring-blue-500">
-                    <div
-                        class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition">
-                        <i class="fa-solid fa-book"></i>
-                    </div>
-                    <div>
-                        <div
-                            class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400">
-                            {{ __('Documentation') }}
-                        </div>
-                    </div>
-                </a>
-            </div>
-
             <!-- Desktop User Menu -->
             <div class="mt-auto shrink-0">
                 @auth
