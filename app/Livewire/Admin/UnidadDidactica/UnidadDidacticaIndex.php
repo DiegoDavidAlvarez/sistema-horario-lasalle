@@ -10,21 +10,34 @@ class UnidadDidacticaIndex extends Component
 {
     use WithPagination;
 
-    public $estadoFilter = 'activo';
+    public $programaEstadoFilter = 'activo';
+    public $unidadEstadoFilter = 'activo';
 
-    public function updatedEstadoFilter()
+    public function updatedProgramaEstadoFilter()
+    {
+        $this->resetPage();
+    }
+
+    public function updatedUnidadEstadoFilter()
     {
         $this->resetPage();
     }
 
     public function render()
     {
-        $query = ProgramaEstudio::with(['unidadesDidacticas' => function ($query) {
-                if ($this->estadoFilter !== 'todos') {
-                    $query->where('estado', $this->estadoFilter);
-                }
-            }])
-            ->orderBy('nombre');
+        $query = ProgramaEstudio::query();
+        
+        // Aplicar filtro de estado para programas
+        if ($this->programaEstadoFilter !== 'todos') {
+            $query->where('estado', $this->programaEstadoFilter);
+        }
+        
+        // Cargar unidades didácticas con su filtro
+        $query->with(['unidadesDidacticas' => function ($query) {
+            if ($this->unidadEstadoFilter !== 'todos') {
+                $query->where('estado', $this->unidadEstadoFilter);
+            }
+        }])->orderBy('nombre');
 
         $programas = $query->paginate(10);
 
@@ -33,4 +46,5 @@ class UnidadDidacticaIndex extends Component
 
         return view('livewire.admin.unidad-didactica.unidad-didactica-index', compact('programas', 'allProgramas'));
     }
+
 }

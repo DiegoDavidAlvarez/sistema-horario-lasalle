@@ -58,117 +58,133 @@
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
-                <tbody class="divide-y divide-slate-200 dark:divide-slate-700">
-                    @foreach ($docentes as $docente)
-                        <tbody x-data="{ expanded: false }" class="border-b border-slate-200 dark:border-slate-700 group">
-                            <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
-                                @click="expanded = !expanded">
-                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300 text-center">
-                                    <div class="flex items-center justify-center gap-2">
-                                        <i class="fas fa-chevron-right text-xs text-slate-400 transition-transform duration-200"
-                                            :class="{ 'rotate-90': expanded }"></i>
-                                        {{ $loop->iteration }}
-                                    </div>
-                                </td>
-                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $docente->nombres }}
-                                </td>
-                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->apellidos }}</td>
-                                <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
-                                    {{ $docente->nivel_academico ?? 'No registrado' }}
-                                </td>
-                                <td class="p-4 text-sm">
-                                    <span
-                                        class="px-2 py-1 rounded-full text-xs font-semibold
-                                    {{ $docente->estado === 'activo' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
-                                        {{ ucfirst($docente->estado) }}
-                                    </span>
-                                </td>
-                                <td class="p-4 text-sm text-right" @click.stop>
-                                    <div class="flex justify-end space-x-2">
-                                        @if ($docente->estado === 'inactivo')
-                                            <!-- Botón Restaurar -->
-                                            <form action="{{ route('admin.docente.restore', $docente->id) }}" method="POST"
-                                                class="inline">
-                                                @csrf
-                                                @method('PUT')
-                                                <button type="submit"
-                                                    class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/50 transition-colors"
-                                                    title="Restaurar docente">
-                                                    <i class="fas fa-trash-restore-alt"></i>
-                                                </button>
-                                            </form>
-                                        @else
-                                            <!-- Botón Editar -->
-                                            <button
-                                                @click="openModalEdit({{ $docente->id }},
-                                            '{{ addslashes($docente->nombres) }}',
-                                            '{{ addslashes($docente->apellidos) }}',
-                                            '{{ addslashes($docente->email) }}',
-                                            '{{ addslashes($docente->tipo_documento) }}',
-                                            '{{ addslashes($docente->numero_documento) }}',
-                                            '{{ addslashes($docente->nivel_academico) }}')"
-                                                class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
-                                                title="Editar docente">
-                                                <i class="fas fa-edit"></i>
+                @forelse ($docentes as $docente)
+                    <tbody x-data="{ expanded: false }" class="border-b border-slate-200 dark:border-slate-700 group">
+                        <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
+                            @click="expanded = !expanded">
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300 text-center">
+                                <div class="flex items-center justify-center gap-2">
+                                    <i class="fas fa-chevron-right text-xs text-slate-400 transition-transform duration-200"
+                                        :class="{ 'rotate-90': expanded }"></i>
+                                    {{ $loop->iteration }}
+                                </div>
+                            </td>
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $docente->nombres }}
+                            </td>
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->apellidos }}</td>
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
+                                {{ $docente->nivel_academico ?? 'No registrado' }}
+                            </td>
+                            <td class="p-4 text-sm">
+                                <span
+                                    class="px-2 py-1 rounded-full text-xs font-semibold
+                                {{ $docente->estado === 'activo' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                    {{ ucfirst($docente->estado) }}
+                                </span>
+                            </td>
+                            <td class="p-4 text-sm text-right" @click.stop>
+                                <div class="flex justify-end space-x-2">
+                                    @if ($docente->estado === 'inactivo')
+                                        <!-- Botón Restaurar -->
+                                        <form action="{{ route('admin.docente.restore', $docente->id) }}" method="POST"
+                                            class="inline">
+                                            @csrf
+                                            @method('PUT')
+                                            <button type="submit"
+                                                class="text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-300 p-2 rounded-lg hover:bg-green-50 dark:hover:bg-green-900/50 transition-colors"
+                                                title="Restaurar docente">
+                                                <i class="fas fa-trash-restore-alt"></i>
                                             </button>
-                                            <!-- Botón Eliminar -->
-                                            <button onclick="confirmDelete({{ $docente->id }})"
-                                                class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
-                                                title="Eliminar docente">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
+                                        </form>
+                                    @else
+                                        <!-- Botón Editar -->
+                                        <button
+                                            @click="openModalEdit({{ $docente->id }},
+                                        '{{ addslashes($docente->nombres) }}',
+                                        '{{ addslashes($docente->apellidos) }}',
+                                        '{{ addslashes($docente->email) }}',
+                                        '{{ addslashes($docente->tipo_documento) }}',
+                                        '{{ addslashes($docente->numero_documento) }}',
+                                        '{{ addslashes($docente->nivel_academico) }}')"
+                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
+                                            title="Editar docente">
+                                            <i class="fa-solid fa-pen-to-square"></i>
+                                        </button>
+                                        <!-- Botón Eliminar -->
+                                        <button onclick="confirmDelete({{ $docente->id }})"
+                                            class="text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/50 transition-colors"
+                                            title="Eliminar docente">
+                                            <i class="fa-solid fa-trash-can"></i>
+                                        </button>
 
-                                            <!-- Formulario Eliminar (oculto) -->
-                                            <form id="delete-form-{{ $docente->id }}"
-                                                action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
-                                                class="hidden">
-                                                @csrf
-                                                @method('DELETE')
-                                            </form>
-                                        @endif
-                                    </div>
-                                </td>
+                                        <!-- Formulario Eliminar (oculto) -->
+                                        <form id="delete-form-{{ $docente->id }}"
+                                            action="{{ route('admin.docente.destroy', $docente->id) }}" method="POST"
+                                            class="hidden">
+                                            @csrf
+                                            @method('DELETE')
+                                        </form>
+                                    @endif
+                                </div>
+                            </td>
 
-                            </tr>
-                            <!-- Fila de Detalles Expandible -->
-                            <tr x-show="expanded" x-cloak x-transition:enter="transition ease-out duration-200"
-                                x-transition:enter-start="opacity-0 -translate-y-2"
-                                x-transition:enter-end="opacity-100 translate-y-0" class="bg-slate-50 dark:bg-slate-800/50">
-                                <td colspan="5" class="p-4 pl-12">
-                                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                        <div>
-                                            <span
-                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                                Email
-                                            </span>
-                                            <span class="text-sm text-slate-700 dark:text-slate-300">
-                                                {{ $docente->email }}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <span
-                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                                Tipo Documento
-                                            </span>
-                                            <span class="text-sm text-slate-700 dark:text-slate-300">
-                                                {{ $docente->tipo_documento }}
-                                            </span>
-                                        </div>
-                                        <div>
-                                            <span
-                                                class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                                Número Documento
-                                            </span>
-                                            <span class="text-sm text-slate-700 dark:text-slate-300 font-mono">
-                                                {{ $docente->numero_documento }}
-                                            </span>
-                                        </div>
+                        </tr>
+                        <!-- Fila de Detalles Expandible -->
+                        <tr x-show="expanded" x-cloak x-transition:enter="transition ease-out duration-200"
+                            x-transition:enter-start="opacity-0 -translate-y-2"
+                            x-transition:enter-end="opacity-100 translate-y-0" class="bg-slate-50 dark:bg-slate-800/50">
+                            <td colspan="6" class="p-4 pl-12">
+                                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                    <div>
+                                        <span
+                                            class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                            Email
+                                        </span>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">
+                                            {{ $docente->email }}
+                                        </span>
                                     </div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    @endforeach
-                </tbody>
+                                    <div>
+                                        <span
+                                            class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                            Tipo Documento
+                                        </span>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300">
+                                            {{ $docente->tipo_documento }}
+                                        </span>
+                                    </div>
+                                    <div>
+                                        <span
+                                            class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
+                                            Número Documento
+                                        </span>
+                                        <span class="text-sm text-slate-700 dark:text-slate-300 font-mono">
+                                            {{ $docente->numero_documento }}
+                                        </span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                @empty
+                    <tbody class="bg-white dark:bg-slate-800">
+                        <tr>
+                            <td colspan="6" class="py-12 text-center">
+                                <div class="flex flex-col items-center justify-center p-6">
+                                    <div class="mx-auto w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-full flex items-center justify-center mb-4">
+                                        <i class="fa-solid fa-user-tie text-2xl text-slate-400 dark:text-slate-500"></i>
+                                    </div>
+                                    <h4 class="text-lg font-medium text-slate-700 dark:text-slate-300 mb-2">
+                                        No se encontraron docentes
+                                    </h4>
+                                    <p class="text-sm text-slate-500 dark:text-slate-400 max-w-xs mx-auto">
+                                        Prueba ajustando los filtros de búsqueda o agrega un nuevo docente al sistema.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                @endforelse
             </table>
         </div>
 

@@ -4,10 +4,10 @@ namespace App\Livewire\Admin\ProgramaEstudio;
 
 use Livewire\Component;
 
-class ProgramaEstudioIndex extends Component
+class ProgramaEstudioNew extends Component
 {
     public function render()
     {
-        return view('livewire.admin.programa-estudio.programa-estudio-index');
+        return view('livewire.admin.programa-estudio.programa-estudio-new');
     }
 }
