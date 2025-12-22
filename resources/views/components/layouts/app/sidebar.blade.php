@@ -279,7 +279,7 @@
                     <div>
                         <div
                             class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('admin.docente.index') ? 'text-blue-700 dark:text-blue-400' : '' }}">
-                            {{ __('Docente') }}
+                            {{ __('Docentes') }}
                         </div>
                     </div>
                 </a>
