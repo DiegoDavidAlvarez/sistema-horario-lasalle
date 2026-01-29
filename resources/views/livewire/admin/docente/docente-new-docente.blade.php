@@ -1,15 +1,19 @@
 <template x-teleport="body">
-    <div x-show="isCreateOpen" x-cloak x-transition:enter="ease-out duration-300"
-        x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100"
-        x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100"
-        x-transition:leave-end="opacity-0" class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" aria-hidden="true"
+    <div x-show="isCreateOpen" 
+        x-cloak x-transition:enter="ease-out duration-300"
+        x-transition:enter-start="opacity-0" 
+        x-transition:enter-end="opacity-100"
+        x-transition:leave="ease-in duration-200" 
+        x-transition:leave-start="opacity-100"
+        x-transition:leave-end="opacity-0" 
+        class="fixed inset-0 z-50 overflow-y-auto">
+        <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
+            aria-hidden="true"
             @click="closeModalCreate"></div>
 
         <!-- Contenido del Modal -->
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div
-                class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700 relative z-10">
+            <div class="inline-block align-bottom bg-white dark:bg-slate-800 rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full border border-slate-200 dark:border-slate-700 relative z-10">
                 <form action="{{ route('admin.docente.store') }}" method="POST" class="space-y-6">
                     @csrf
                     <div class="p-6">
@@ -18,11 +22,13 @@
                         <div class="grid grid-cols-1 gap-6">
                             <!-- Campo Tipo de Documento -->
                             <div data-flux-field>
-                                <label for="tipo_documento" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="tipo_documento" 
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Tipo de Documento <span class="text-red-500">*</span>
                                 </label>
-                                <select id="tipo_documento" name="tipo_documento"
+                                <select id="tipo_documento" 
+                                    name="tipo_documento"
                                     class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
                                     required data-flux-control>
                                     <option value="DNI">DNI</option>
@@ -35,14 +41,17 @@
 
                             <!-- Campo Número de Documento (DNI) -->
                             <div data-flux-field>
-                                <label for="numero_documento" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="numero_documento" 
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Número de Documento <span class="text-red-500">*</span>
                                 </label>
                                 <div class="flex gap-2">
                                     <input type="text" id="numero_documento" name="numero_documento"
                                         class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
-                                        placeholder="Ej: 12345678" required pattern="\d{8}" maxlength="8"
+                                        placeholder="Ej: 12345678" 
+                                        required 
+                                        pattern="\d{8}" maxlength="8"
                                         oninput="this.value = this.value.replace(/[^0-9]/g, '')" data-flux-control>
                                     <button type="button" id="consultar-dni"
                                         class="px-4 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center">
@@ -56,13 +65,14 @@
 
                             <!-- Campo Nombres -->
                             <div data-flux-field>
-                                <label for="nombres" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="nombres" 
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Nombres <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="nombres" name="nombres"
                                     class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
-                                    placeholder="Ej: Juan Carlos" required maxlength="100" data-flux-control>
+                                    placeholder="Ej: Juan" required maxlength="100" data-flux-control>
                                 @error('nombres')
                                     <p class="mt-1 text-sm text-red-500 font-medium" data-flux-component="error">{{ $message }}</p>
                                 @enderror
@@ -70,13 +80,14 @@
 
                             <!-- Campo Apellidos -->
                             <div data-flux-field>
-                                <label for="apellidos" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="apellidos" 
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Apellidos <span class="text-red-500">*</span>
                                 </label>
                                 <input type="text" id="apellidos" name="apellidos"
                                     class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
-                                    placeholder="Ej: Pérez Gómez" required maxlength="100" data-flux-control>
+                                    placeholder="Ej: Pérez Ttito" required maxlength="100" data-flux-control>
                                 @error('apellidos')
                                     <p class="mt-1 text-sm text-red-500 font-medium" data-flux-component="error">{{ $message }}</p>
                                 @enderror
@@ -84,13 +95,14 @@
 
                             <!-- Campo Email -->
                             <div data-flux-field>
-                                <label for="email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="email"
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Email <span class="text-red-500">*</span>
                                 </label>
                                 <input type="email" id="email" name="email"
                                     class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
-                                    placeholder="Ej: juan.perez@email.com" required data-flux-control>
+                                    placeholder="Ej: juan-perez@email.com" required data-flux-control>
                                 @error('email')
                                     <p class="mt-1 text-sm text-red-500 font-medium" data-flux-component="error">{{ $message }}</p>
                                 @enderror
@@ -98,12 +110,14 @@
 
                             <!-- Campo Nivel Académico -->
                             <div data-flux-field>
-                                <label for="nivel_academico" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
+                                <label for="nivel_academico" 
+                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
                                     Nivel Académico
                                 </label>
                                 <select id="nivel_academico" name="nivel_academico"
                                     class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
+                                    required
                                     data-flux-control>
                                     <option value="">Seleccione un nivel</option>
                                     <option value="Bachiller">Bachiller</option>
@@ -129,15 +143,15 @@
                         </div>
                     </div>
 
-                    <div
-                        class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 flex justify-end space-x-3">
+                    <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 flex justify-end space-x-3">
                         <button type="button" @click="closeModalCreate"
                             class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium">
                             Cancelar
                         </button>
                         <button type="submit"
-                            class="px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl">
-                            Registrar Docente
+                            class="flex items-center gap-3 px-6 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Registrar Docente</span>
                         </button>
                     </div>
                 </form>
@@ -185,7 +199,8 @@
                 error: function (xhr) {
                     const errorMessage = xhr.responseJSON?.error || 'No se pudo conectar con la API';
                     SwalThemed.error('Error', errorMessage);
-                }
+                },
+
             });
         });
     });

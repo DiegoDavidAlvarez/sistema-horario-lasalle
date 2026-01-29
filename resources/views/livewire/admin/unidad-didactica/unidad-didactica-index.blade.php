@@ -199,16 +199,16 @@
     </div>
 
     <!-- Modal Crear Unidad -->
-    @include('livewire.admin.unidad-didactica.unidad-didactica-form')
+    @include('livewire.admin.unidad-didactica.unidad-didactica-new-unidad')
 
     <!-- Modal Editar Unidad -->
-    @include('livewire.admin.unidad-didactica.unidad-didactica-edit')
+    @include('livewire.admin.unidad-didactica.unidad-didactica-edit-unidad')
 </div>
 <script>
     function confirmDelete(id) {
         SwalThemed.confirm(
             '¿Eliminar unidad didáctica?',
-            '¡No podrás revertir esto!'
+            'Podrás restaurar este registro desde el filtro de inactivos.'
         ).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
@@ -251,6 +251,11 @@
                 this.isEditOpen = false;
                 this.resetForm();
                 document.body.classList.remove('overflow-hidden');
+                // Reiniciar formulario de creación
+                setTimeout(() => {
+                    const form = document.querySelector('form[action="{{ route('admin.unidad-didactica.store') }}"]');
+                    if(form) form.reset();
+                }, 300);
             },
 
             resetForm() {

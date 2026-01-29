@@ -11,12 +11,23 @@ use Illuminate\Validation\ValidationException;
 
 class ModuloController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:admin.modulos.store')->only(['store', 'create']);
+        $this->middleware('permission:admin.modulos.update')->only(['update', 'edit']);
+        $this->middleware('permission:admin.modulos.destroy')->only(['destroy']);
+    }
+
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'programa_estudio_id' => 'required|exists:programas_estudio,id',
-            'numero_modulo' => 'required|integer|min:1',
+            'numero_modulo' => 'required|integer|min:1|max:3',
             'nombre' => 'required|string|max:200',
+        ], [
+            'numero_modulo.min' => 'El número de módulo debe ser al menos 1.',
+            'numero_modulo.max' => 'El número de módulo no puede ser mayor a 3.',
+            'numero_modulo.required' => 'Debe seleccionar un número de módulo.',
         ]);
 
         try {
@@ -28,7 +39,9 @@ class ModuloController extends Controller
                 ->exists();
 
             if ($existe) {
-                return back()->with('error', 'Ya existe un módulo con ese número en este programa.');
+                return back()
+                    ->withErrors(['numero_modulo' => 'El módulo ' . $request->numero_modulo . ' ya está registrado para este programa de estudios.'])
+                    ->withInput();
             }
 
             Modulo::create([
@@ -38,7 +51,7 @@ class ModuloController extends Controller
             ]);
 
             return redirect()->route('admin.programa-estudio.index')
-                ->with('success', 'Módulo agregado correctamente.');
+                ->with('success', 'Módulo ' . $request->numero_modulo . ' agregado correctamente.');
 
         } catch (ValidationException $e) {
             return back()->withErrors($e->validator->errors())->withInput();
@@ -50,13 +63,27 @@ class ModuloController extends Controller
 
         $validator = Validator::make($request->all(), [
             'nombre' => 'required|string|max:200',
+            'numero_modulo' => 'required|integer|min:1|max:3',
         ]);
 
         try {
             $validator->validate();
 
+            // Verificar si el nuevo número de módulo ya está en uso por otro módulo del mismo programa
+            $existe = Modulo::where('programa_estudio_id', $modulo->programa_estudio_id)
+                ->where('numero_modulo', $request->numero_modulo)
+                ->where('id', '!=', $modulo->id)
+                ->exists();
+
+            if ($existe) {
+                return back()
+                    ->withErrors(['numero_modulo' => 'El módulo ' . $request->numero_modulo . ' ya está registrado para este programa de estudios.'])
+                    ->withInput();
+            }
+
             $modulo->update([
                 'nombre' => $request->nombre,
+                'numero_modulo' => $request->numero_modulo,
             ]);
 
             return redirect()->route('admin.programa-estudio.index')

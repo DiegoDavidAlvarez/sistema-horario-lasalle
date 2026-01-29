@@ -16,12 +16,19 @@ class Modulo extends Model
         'codigo',
         'semestre',
     ];
-
     /**
      * Relación con el programa de estudio
      */
     public function programaEstudio()
     {
         return $this->belongsTo(ProgramaEstudio::class, 'programa_estudio_id');
+    }
+
+    /**
+     * Relación con los planes de estudio (1:N)
+     */
+    public function planesEstudio()
+    {
+        return $this->hasMany(PlanEstudios::class, 'modulo_id');
     }
 }

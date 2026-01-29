@@ -6,7 +6,7 @@ use App\Models\ProgramaEstudio;
 use Livewire\Component;
 use Livewire\WithPagination;
 
-class ProgramaEstudioTable extends Component
+class ProgramaEstudioIndex extends Component
 {
     use WithPagination;
 
@@ -31,6 +31,6 @@ class ProgramaEstudioTable extends Component
 
         $programas = $query->paginate(10);
 
-        return view('livewire.admin.programa-estudio.programa-estudio-table', compact('programas'));
+        return view('livewire.admin.programa-estudio.programa-estudio-index', compact('programas'));
     }
 }

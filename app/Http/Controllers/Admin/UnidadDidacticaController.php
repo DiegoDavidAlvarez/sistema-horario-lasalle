@@ -11,6 +11,15 @@ use Illuminate\Validation\ValidationException;
 
 class UnidadDidacticaController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('permission:admin.unidad-didactica.index')->only(['index']);
+        $this->middleware('permission:admin.unidad-didactica.store')->only(['store', 'create']);
+        $this->middleware('permission:admin.unidad-didactica.update')->only(['update', 'edit']);
+        $this->middleware('permission:admin.unidad-didactica.destroy')->only(['destroy']);
+        $this->middleware('permission:admin.unidad-didactica.restore')->only(['restore']);
+    }
+
     public function index()
     {
         return view('admin.unidad-didactica.index');

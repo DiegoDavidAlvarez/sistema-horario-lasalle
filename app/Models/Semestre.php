@@ -16,6 +16,6 @@ class Semestre extends Model
 
     public function detallesPlan()
     {
-        return $this->hasMany(DetallePlanEstudio::class, 'semestre_id');
+        return $this->hasMany(PlanEstudios::class, 'semestre_id');
     }
 }

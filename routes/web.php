@@ -2,14 +2,16 @@
 
 use App\Http\Controllers\Admin\DocenteController;
 use App\Http\Controllers\Admin\ModuloController;
+use App\Http\Controllers\Admin\PlanEstudioController;
 use App\Http\Controllers\Admin\ProgramaEstudioController;
 use App\Http\Controllers\Admin\UnidadDidacticaController;
+use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
 use Livewire\Volt\Volt;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('dashboard');
 })->name('home');
 
 Route::view('dashboard', 'dashboard')
@@ -35,7 +37,7 @@ Route::middleware(['auth'])->group(function () {
         ->name('two-factor.show');
 });
 
-Route::prefix('admin')->group(function () {
+Route::prefix('admin')->middleware('auth')->group(function () {
     Route::resource('docente', DocenteController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.docente');
@@ -44,11 +46,11 @@ Route::prefix('admin')->group(function () {
     Route::put('docente/{id}/restore', [DocenteController::class, 'restore'])
         ->name('admin.docente.restore');
 
-    Route::put('programa-estudio/{id}/restore', [ProgramaEstudioController::class, 'restore'])
-        ->name('admin.programa-estudio.restore');
     Route::resource('programa-estudio', ProgramaEstudioController::class)
         ->only(['index', 'store', 'update', 'destroy'])
         ->names('admin.programa-estudio');
+    Route::put('programa-estudio/{id}/restore', [ProgramaEstudioController::class, 'restore'])
+        ->name('admin.programa-estudio.restore');
 
     Route::resource('modulos', ModuloController::class)
         ->only(['store', 'update', 'destroy'])
@@ -59,4 +61,10 @@ Route::prefix('admin')->group(function () {
         ->names('admin.unidad-didactica');
     Route::put('unidad-didactica/{id}/restore', [UnidadDidacticaController::class, 'restore'])
         ->name('admin.unidad-didactica.restore');
+
+    Route::resource('plan-estudio', PlanEstudioController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names('admin.plan-estudio');
+    Route::put('plan-estudio/{id}/restore', [PlanEstudioController::class, 'restore'])
+        ->name('admin.plan-estudio.restore');
 });

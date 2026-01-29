@@ -3,6 +3,12 @@
 
 <head>
     @include('partials.head')
+    
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -38,13 +44,22 @@
             },
             success: function (title, text) {
                 const theme = getSwalTheme();
-                const isDark = document.documentElement.classList.contains('dark');
                 return Swal.fire({
                     ...theme,
+                    toast: true,
+                    position: 'top-end',
                     icon: 'success',
                     title: title,
                     text: text,
-                    iconColor: '#22c55e'
+                    showConfirmButton: false,
+                    timer: 5000,
+                    timerProgressBar: true,
+                    iconColor: '#22c55e',
+                    didOpen: (toast) => {
+                        toast.addEventListener('mouseenter', Swal.stopTimer)
+                        toast.addEventListener('mouseleave', Swal.resumeTimer)
+                        toast.addEventListener('click', Swal.close)
+                    }
                 });
             },
             error: function (title, text) {
@@ -82,9 +97,141 @@
                 });
             }
         };
+
+        // --- GLOBAL LOADING SCREEN CONTROL ---
+        
+        function showLoadingScreen() {
+            let loader = document.getElementById('global-loader');
+            if (!loader) {
+                loader = document.createElement('div');
+                loader.id = 'global-loader';
+                loader.innerHTML = `
+                    <div class="loader-content">
+                        <div class="spinner"></div>
+                        <p class="mt-4 text-white font-medium text-lg">Procesando solicitud...</p>
+                    </div>
+                `;
+                document.body.appendChild(loader);
+            }
+            // Pequeño timeout para permitir que el navegador renderice si es necesario
+            setTimeout(() => {
+                loader.classList.add('active');
+            }, 10);
+        }
+
+        function hideLoadingScreen() {
+            const loader = document.getElementById('global-loader');
+            if (loader) {
+                loader.classList.remove('active');
+                // Esperar a que termine la transición de opacidad (300ms) para remover del DOM
+                setTimeout(() => {
+                    if (!loader.classList.contains('active')) {
+                        loader.remove();
+                    }
+                }, 300); 
+            }
+        }
+
+        // Interceptores Globales
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // 1. Envío de Formularios (Delegación de eventos para soportar modales y contenido dinámico)
+            document.addEventListener('submit', function(e) {
+                const form = e.target;
+                // Verificar que sea un formulario
+                if (!form || form.tagName !== 'FORM') return;
+
+                // Si el formulario no es válido, no mostramos el loader
+                if (!form.checkValidity()) return;
+                
+                // Si el form tiene target="_blank" no mostramos loader
+                if (form.target === '_blank') return;
+                
+                showLoadingScreen();
+            });
+
+            // 2. Interceptor para envíos programáticos via .submit() (Ej: Botones de eliminar con SweetAlert)
+            const originalSubmit = HTMLFormElement.prototype.submit;
+            HTMLFormElement.prototype.submit = function() {
+                if (this.target !== '_blank') {
+                    showLoadingScreen();
+                }
+                originalSubmit.apply(this);
+            };
+
+            // 2. Interceptor global para jQuery AJAX (como el botón DNI)
+            $(document).ajaxStart(function() {
+                showLoadingScreen();
+            }).ajaxStop(function() {
+                hideLoadingScreen();
+            });
+
+            // 3. Manejo de Livewire (si se usa en el futuro para eventos globales)
+            // Se puede descomentar si Livewire está presente globalmente
+            /*
+            if (window.Livewire) {
+                 Livewire.hook('commit', ({ component, commit, respond, succeed, fail }) => {
+                    showLoadingScreen();
+                    succeed(({ snapshot, effect }) => {
+                        queueMicrotask(() => {
+                            hideLoadingScreen();
+                        })
+                    })
+                    fail(() => {
+                        hideLoadingScreen();
+                    })
+                })
+            }
+            */
+        });
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        /* Estilos Global Loader */
+        #global-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7); /* Fondo oscuro semitransparente */
+            backdrop-filter: blur(4px); /* Efecto blur moderno */
+            z-index: 99999; /* Por encima de todo, incluso modales (z-50) y Swal (z-10000 estandar) */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+            pointer-events: none; /* Mientras está invisible no bloquea clicks */
+        }
+
+        #global-loader.active {
+            opacity: 1;
+            pointer-events: all; /* Ahora sí bloquea */
+        }
+
+        .loader-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        /* Spinner CSS Puro */
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #3b82f6; /* Azul Tailwind (blue-500) */
+            animation: spin 1s ease-in-out infinite;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+
 
         body {
             font-family: 'Inter', sans-serif;
@@ -315,6 +462,22 @@
                         </div>
                     </div>
                 </a>
+
+                <!-- Plan de Estudios -->
+                <a href="{{ route('admin.plan-estudio.index') }}"
+                    class="w-full text-left px-3 py-3 rounded flex items-center gap-3 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition border border-transparent hover:border-slate-200 dark:hover:border-slate-600 group focus:outline-none focus:ring-2 focus:ring-blue-500 {{ request()->routeIs('admin.plan-estudio.index') ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800' : '' }}"
+                    wire:navigate>
+                    <div
+                        class="w-8 h-8 rounded bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 flex items-center justify-center text-xs font-bold group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition {{ request()->routeIs('admin.plan-estudio.index') ? 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400' : '' }}">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <div
+                            class="text-sm font-medium text-slate-700 dark:text-slate-300 group-hover:text-blue-700 dark:group-hover:text-blue-400 {{ request()->routeIs('admin.plan-estudio.index') ? 'text-blue-700 dark:text-blue-400' : '' }}">
+                            {{ __('Plan de Estudios') }}
+                        </div>
+                    </div>
+                </a>
             </div>
 
             <!-- Desktop User Menu -->
@@ -375,8 +538,28 @@
         <!-- Contenido principal con scroll -->
         <div class="main-content">
             {{ $slot }}
+
+            {{-- Manejo de Errores de Sesión (Global dentro del contenido dinámico) --}}
+            @if (session('error'))
+                <script>
+                    // Función para mostrar el error
+                    (function() {
+                        const errorMessage = "{{ session('error') }}";
+                        const show = () => SwalThemed.error("¡Acceso Denegado!", errorMessage);
+                        
+                        // Intentar mostrar inmediatamente (para cargas normales)
+                        if (document.readyState === 'complete' || document.readyState === 'interactive') {
+                            show();
+                        } else {
+                            document.addEventListener('DOMContentLoaded', show);
+                        }
+                        
+                        // También escuchar navegación de Livewire (para SPA)
+                        document.addEventListener('livewire:navigated', show, { once: true });
+                    })();
+                </script>
+            @endif
         </div>
-    </div>
 
     @fluxScripts
 </body>

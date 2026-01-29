@@ -40,7 +40,7 @@
             @forelse ($programas as $programa)
                 @php
                     $modulosCount = $programa->modulos->count();
-                    $siguienteNumero = $modulosCount + 1;
+                    $modulosExistentes = $programa->modulos->pluck('numero_modulo')->toArray();
                 @endphp
 
                 <div
@@ -124,8 +124,8 @@
                                     <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">
                                         Módulos ({{ $modulosCount }})
                                     </h3>
-                                    <!-- Botón dinámico que muestra el siguiente número -->
-                                    <button @click.stop="openModuleModal({{ $programa->id }}, {{ $siguienteNumero }})"
+                                    <!-- Botón para agregar módulo -->
+                                    <button @click.stop="openModuloModal({{ $programa->id }}, {{ json_encode($modulosExistentes) }})"
                                         class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
                                             fill="currentColor">
@@ -133,7 +133,7 @@
                                                 d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
                                                 clip-rule="evenodd" />
                                         </svg>
-                                        Agregar Módulo {{ $siguienteNumero }}
+                                        Agregar Módulo
                                     </button>
                                 </div>
 
@@ -160,7 +160,7 @@
                                             </div>
                                             <div class="flex gap-2">
                                                 <button
-                                                    @click="openEditModuleModal('{{ $modulo->id }}', '{{ addslashes($modulo->nombre) }}', {{ $modulo->numero_modulo }})"
+                                                    @click="openEditModuloModal('{{ $modulo->id }}', '{{ addslashes($modulo->nombre) }}', {{ $modulo->numero_modulo }}, {{ json_encode($modulosExistentes) }})"
                                                     class="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded transition-colors"
                                                     title="Editar módulo">
                                                     <i class="fa-solid fa-pen-to-square"></i>
@@ -226,7 +226,7 @@
     @include('livewire.admin.programa-estudio.programa-estudio-new-modulo')
 
     <!-- Modal para Editar Módulo -->
-    @include('livewire.admin.programa-estudio.programa-estudio-edit-module')
+    @include('livewire.admin.programa-estudio.programa-estudio-edit-modulo')
 </div>
 
 <script>
@@ -234,7 +234,7 @@
     function confirmDelete(id) {
         SwalThemed.confirm(
             '¿Eliminar programa de estudio?',
-            '¡Esta acción no se puede deshacer!'
+            'Podrás restaurar este registro desde el filtro de inactivos.'
         ).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
@@ -259,16 +259,18 @@
         return {
             expandedPrograms: [],
             isEditModalOpen: false,
-            isModuleModalOpen: false,
-            isEditModuleModalOpen: false,
+            isModuloModalOpen: false,
+            isEditModuloModalOpen: false,
             currentId: null,
             currentNombre: '',
             currentAbreviatura: '',
             currentProgramaId: null,
             nextModuleNumber: 1,
-            editModuleId: null,
-            editModuleNombre: '',
-            editModuleNumero: null,
+            editModuloId: null,
+            editModuloNombre: '',
+            editModuloNumero: null,
+            editModuloOriginalNumero: null,
+            editModuloExisting: [],
 
             toggleProgram(programaId) {
                 const index = this.expandedPrograms.indexOf(programaId);
@@ -292,28 +294,55 @@
                 document.body.classList.remove('overflow-hidden');
             },
 
-            openModuleModal(programaId, numeroModulo) {
+            openModuloModal(programaId, existingModulos) {
                 this.currentProgramaId = programaId;
-                this.nextModuleNumber = numeroModulo;
-                this.isModuleModalOpen = true;
+                this.isModuloModalOpen = true;
                 document.body.classList.add('overflow-hidden');
+                
+                // Pasar los módulos existentes al modal
+                this.$nextTick(() => {
+                    const modalElement = document.querySelector('[x-data*="selectedModulo"]');
+                    if (modalElement) {
+                        const modalData = Alpine.$data(modalElement);
+                        if (modalData) {
+                            modalData.existingModulos = existingModulos;
+                            modalData.selectedModulo = null;
+                        }
+                    }
+                });
             },
 
-            closeModuleModal() {
-                this.isModuleModalOpen = false;
+            closeModuloModal() {
+                this.isModuloModalOpen = false;
                 document.body.classList.remove('overflow-hidden');
+                // Reiniciar formulario
+                setTimeout(() => {
+                    const form = document.querySelector('form[action="{{ route('admin.modulos.store') }}"]');
+                    if(form) form.reset();
+                    
+                    // Resetear estado de Alpine del modal
+                    const modalElement = document.querySelector('[x-data*="selectedModulo"]');
+                    if (modalElement) {
+                        const modalData = Alpine.$data(modalElement);
+                        if (modalData) {
+                            modalData.selectedModulo = null;
+                        }
+                    }
+                }, 300);
             },
 
-            openEditModuleModal(id, nombre, numero) {
-                this.editModuleId = id;
-                this.editModuleNombre = nombre;
-                this.editModuleNumero = numero;
-                this.isEditModuleModalOpen = true;
+            openEditModuloModal(id, nombre, numero, existingModulos) {
+                this.editModuloId = id;
+                this.editModuloNombre = nombre;
+                this.editModuloNumero = numero;
+                this.editModuloOriginalNumero = numero;
+                this.editModuloExisting = existingModulos;
+                this.isEditModuloModalOpen = true;
                 document.body.classList.add('overflow-hidden');
             },
 
-            closeEditModuleModal() {
-                this.isEditModuleModalOpen = false;
+            closeEditModuloModal() {
+                this.isEditModuloModalOpen = false;
                 document.body.classList.remove('overflow-hidden');
             }
         }

@@ -18,8 +18,7 @@
     @endif
 
     <!-- Contenedor Principal -->
-    <div
-        class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div class="bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
         <!-- Filtros y Botones -->
         <div class="flex flex-col sm:flex-row justify-between items-center p-6 border-b border-slate-200 dark:border-slate-700 gap-4">
             <div class="flex items-center gap-4 w-full sm:w-auto">
@@ -27,11 +26,10 @@
                     <h1 class="text-2xl font-bold text-slate-800 dark:text-slate-200">
                         Lista de Docentes
                     </h1>
-                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de información docente del sistema
-                    </p>
+                    <p class="text-slate-500 dark:text-slate-400 text-sm mt-1">Gestión de información docente del sistema</p>
                 </div>
                 <!-- Filtro de Estado -->
-                <select wire:model.live="estadoFilter"
+                <select wire:model.live="estadoFilter" {{-- Variable para interaccion en vivo --}}
                     class="bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-sm px-3 py-2 focus:ring-2 focus:ring-blue-500">
                     <option value="activo">Activos</option>
                     <option value="inactivo">Inactivos</option>
@@ -58,32 +56,44 @@
                         <th class="p-4 text-right">Acciones</th>
                     </tr>
                 </thead>
-                @forelse ($docentes as $docente)
-                    <tbody x-data="{ expanded: false }" class="border-b border-slate-200 dark:border-slate-700 group">
+                @forelse ($docentes as $docente) {{-- forelse es igual que foreach pero con excepcion @empty --}}
+                    <tbody x-data="{ expanded: false }"
+                        class="border-b border-slate-200 dark:border-slate-700 group">
+                        {{-- Fila principal de la tabla --}}
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"
                             @click="expanded = !expanded">
+                            {{-- Columna para el numero de fila --}}
                             <td class="p-4 text-sm text-slate-700 dark:text-slate-300 text-center">
                                 <div class="flex items-center justify-center gap-2">
+                                    {{-- Icono de flecha para expandir/contraer fila --}}
                                     <i class="fas fa-chevron-right text-xs text-slate-400 transition-transform duration-200"
                                         :class="{ 'rotate-90': expanded }"></i>
                                     {{ $loop->iteration }}
                                 </div>
                             </td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300 font-medium">{{ $docente->nombres }}
+                            {{-- Columna para los nombres del docente --}}
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300 font-medium">
+                                {{ $docente->nombres }}
                             </td>
-                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">{{ $docente->apellidos }}</td>
+                            {{-- Columna para los apellidos del docente --}}
                             <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
-                                {{ $docente->nivel_academico ?? 'No registrado' }}
+                                {{ $docente->apellidos }}
+                            </td>
+                            {{-- Columna para el nivel academico del docente --}}
+                            <td class="p-4 text-sm text-slate-700 dark:text-slate-300">
+                                {{ $docente->nivel_academico }}
                             </td>
                             <td class="p-4 text-sm">
-                                <span
-                                    class="px-2 py-1 rounded-full text-xs font-semibold
-                                {{ $docente->estado === 'activo' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
-                                    {{ ucfirst($docente->estado) }}
+                                <span class="px-2 py-1 rounded-full text-xs font-semibold 
+                                {{-- Aplica un estilo si el estado es activo y otro si no lo es --}}
+                                    {{ $docente->estado === 'activo' ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400' : 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400' }}">
+                                    {{ ucfirst($docente->estado) }} {{-- ucfirst convierte la primera letra en mayuscula --}}
                                 </span>
                             </td>
+                            {{-- Columna para las acciones del docente --}}
                             <td class="p-4 text-sm text-right" @click.stop>
                                 <div class="flex justify-end space-x-2">
+                                    {{-- Condicion que muestra el boton de restaurar si el docente esta inactivo --}}
                                     @if ($docente->estado === 'inactivo')
                                         <!-- Botón Restaurar -->
                                         <form action="{{ route('admin.docente.restore', $docente->id) }}" method="POST"
@@ -98,16 +108,15 @@
                                         </form>
                                     @else
                                         <!-- Botón Editar -->
-                                        <button
+                                        <button class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
+                                            title="Editar docente"
                                             @click="openModalEdit({{ $docente->id }},
-                                        '{{ addslashes($docente->nombres) }}',
-                                        '{{ addslashes($docente->apellidos) }}',
-                                        '{{ addslashes($docente->email) }}',
-                                        '{{ addslashes($docente->tipo_documento) }}',
-                                        '{{ addslashes($docente->numero_documento) }}',
-                                        '{{ addslashes($docente->nivel_academico) }}')"
-                                            class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
-                                            title="Editar docente">
+                                            '{{ addslashes($docente->nombres) }}',
+                                            '{{ addslashes($docente->apellidos) }}',
+                                            '{{ addslashes($docente->email) }}',
+                                            '{{ addslashes($docente->tipo_documento) }}',
+                                            '{{ addslashes($docente->numero_documento) }}',
+                                            '{{ addslashes($docente->nivel_academico) }}')">
                                             <i class="fa-solid fa-pen-to-square"></i>
                                         </button>
                                         <!-- Botón Eliminar -->
@@ -130,9 +139,12 @@
 
                         </tr>
                         <!-- Fila de Detalles Expandible -->
-                        <tr x-show="expanded" x-cloak x-transition:enter="transition ease-out duration-200"
+                        <tr x-show="expanded" 
+                            x-cloak 
+                            x-transition:enter="transition ease-out duration-200"
                             x-transition:enter-start="opacity-0 -translate-y-2"
-                            x-transition:enter-end="opacity-100 translate-y-0" class="bg-slate-50 dark:bg-slate-800/50">
+                            x-transition:enter-end="opacity-100 translate-y-0" 
+                            class="bg-slate-50 dark:bg-slate-800/50">
                             <td colspan="6" class="p-4 pl-12">
                                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div>
@@ -166,6 +178,7 @@
                             </td>
                         </tr>
                     </tbody>
+                {{-- Contenido que se muestra si no hay datos --}}
                 @empty
                     <tbody class="bg-white dark:bg-slate-800">
                         <tr>
@@ -197,17 +210,17 @@
     </div>
 
     <!-- Modal Editar Docente -->
-    @include('livewire.admin.docente.docente-edit')
+    @include('livewire.admin.docente.docente-edit-docente')
 
     <!-- Modal Crear Docente -->
-    @include('livewire.admin.docente.docente-form')
+    @include('livewire.admin.docente.docente-new-docente')
 </div>
 
 <script>
     function confirmDelete(id) {
         SwalThemed.confirm(
             '¿Eliminar docente?',
-            '¡No podrás revertir esto!'
+            'Podrás restaurar este registro desde el filtro de inactivos.'
         ).then((result) => {
             if (result.isConfirmed) {
                 document.getElementById('delete-form-' + id).submit();
@@ -253,6 +266,10 @@
             closeModalCreate() {
                 this.isCreateOpen = false;
                 document.body.classList.remove('overflow-hidden');
+                // Reiniciar formulario (esperar a que cierre la transición)
+                setTimeout(() => {
+                    document.querySelector('form[action="{{ route('admin.docente.store') }}"]').reset();
+                }, 300);
             },
         }
     }

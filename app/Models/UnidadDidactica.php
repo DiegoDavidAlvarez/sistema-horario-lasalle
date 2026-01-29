@@ -18,4 +18,13 @@ class UnidadDidactica extends Model
     {
         return $this->belongsTo(ProgramaEstudio::class, 'programa_estudio_id');
     }
+
+    /**
+     * Relación con los planes de estudio
+     */
+    public function planesEstudio()
+    {
+        return $this->hasMany(PlanEstudios::class, 'unidad_didactica_id');
+    }
+
 }
