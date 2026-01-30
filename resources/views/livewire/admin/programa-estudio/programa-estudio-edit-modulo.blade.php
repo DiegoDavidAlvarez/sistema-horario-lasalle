@@ -58,27 +58,21 @@
                                             <span class="flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-3 py-1 rounded-full"
                                                 :class="editModuloNumero == num ? 'bg-white/30' : ''"
                                                 x-show="editModuloNumero == num">
-                                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
-                                                </svg>
+                                                <i class="fa-solid fa-check"></i>
                                                 <span>Seleccionado</span>
                                             </span>
                                             
                                             <!-- Estado No disponible -->
                                             <span class="text-xs font-semibold flex items-center gap-1" 
                                                 x-show="editModuloExisting.includes(num) && num != editModuloOriginalNumero">
-                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                                </svg>
+                                                <i class="fa-solid fa-lock"></i>
                                                 No disponible
                                             </span>
 
                                             <!-- Estado Actual -->
                                             <span class="text-xs font-semibold flex items-center gap-1 text-blue-600 dark:text-blue-400" 
                                                 x-show="num == editModuloOriginalNumero && editModuloNumero != num">
-                                                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
-                                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
-                                                </svg>
+                                                <i class="fa-solid fa-pen"></i>
                                                 Actual
                                             </span>
 
@@ -93,26 +87,20 @@
                                             x-transition:enter="transition ease-out duration-300"
                                             x-transition:enter-start="opacity-0 scale-0 rotate-180"
                                             x-transition:enter-end="opacity-100 scale-100 rotate-0"
-                                            class="absolute -top-3 -right-3 bg-green-500 rounded-full p-2 shadow-2xl border-4 border-white dark:border-slate-800">
-                                            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"/>
-                                            </svg>
+                                            class="absolute -top-3 -right-3 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center shadow-2xl border-4 border-white dark:border-slate-800 text-white">
+                                            <i class="fa-solid fa-check text-xs"></i>
                                         </div>
                                         
                                         <!-- Icono de candado para módulos no disponibles -->
                                         <div x-show="editModuloExisting.includes(num) && num != editModuloOriginalNumero" 
-                                            class="absolute -top-3 -right-3 bg-red-500 rounded-full p-2 shadow-xl border-4 border-white dark:border-slate-800">
-                                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                                <path fill-rule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clip-rule="evenodd"/>
-                                            </svg>
+                                            class="absolute -top-3 -right-3 w-8 h-8 bg-red-500 rounded-full flex items-center justify-center shadow-xl border-4 border-white dark:border-slate-800 text-white">
+                                            <i class="fa-solid fa-lock text-xs"></i>
                                         </div>
                                     </label>
                                 </template>
                             </div>
                             <p class="mt-3 text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1">
-                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-                                </svg>
+                                <i class="fa-solid fa-circle-info"></i>
                                 Los módulos ocupados no están disponibles para cambio
                             </p>
                         </div>
