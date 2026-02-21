@@ -13,7 +13,6 @@ class Docente extends Model
         'nombres',
         'apellidos',
         'email',
-        'tipo_documento',
         'numero_documento',
         'nivel_academico',
         'estado',

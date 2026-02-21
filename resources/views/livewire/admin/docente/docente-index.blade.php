@@ -114,7 +114,6 @@
                                             '{{ addslashes($docente->nombres) }}',
                                             '{{ addslashes($docente->apellidos) }}',
                                             '{{ addslashes($docente->email) }}',
-                                            '{{ addslashes($docente->tipo_documento) }}',
                                             '{{ addslashes($docente->numero_documento) }}',
                                             '{{ addslashes($docente->nivel_academico) }}')">
                                             <i class="fa-solid fa-pen-to-square"></i>
@@ -159,16 +158,7 @@
                                     <div>
                                         <span
                                             class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                            Tipo Documento
-                                        </span>
-                                        <span class="text-sm text-slate-700 dark:text-slate-300">
-                                            {{ $docente->tipo_documento }}
-                                        </span>
-                                    </div>
-                                    <div>
-                                        <span
-                                            class="text-xs font-semibold text-slate-500 uppercase tracking-wider block mb-1">
-                                            Número Documento
+                                            Número de DNI
                                         </span>
                                         <span class="text-sm text-slate-700 dark:text-slate-300 font-mono">
                                             {{ $docente->numero_documento }}
@@ -237,16 +227,14 @@
             currentNombres: '',
             currentApellidos: '',
             currentEmail: '',
-            currentTipoDocumento: '',
             currentDni: '',
             currentNivelAcademico: '',
 
-            openModalEdit(id, nombres, apellidos, email, tipo_documento, dni, nivel_academico) {
+            openModalEdit(id, nombres, apellidos, email, dni, nivel_academico) {
                 this.currentId = id;
                 this.currentNombres = nombres;
                 this.currentApellidos = apellidos;
                 this.currentEmail = email;
-                this.currentTipoDocumento = tipo_documento;
                 this.currentDni = dni;
                 this.currentNivelAcademico = nivel_academico;
                 this.isEditOpen = true;
@@ -278,7 +266,6 @@
     $(document).ready(function () {
         $('#consultar-dni-edit').on('click', function () {
             const dni = $('#edit-dni').val();
-            const tipoDocumento = $('#edit-tipo_documento').val();
 
             if (!dni || !dni.match(/^\d{8}$/)) {
                 SwalThemed.error('Error', 'El número de documento debe tener 8 dígitos');
@@ -289,8 +276,7 @@
                 url: '{{ route('admin.docente.consultar-dni') }}',
                 method: 'GET',
                 data: {
-                    dni: dni,
-                    tipo_documento: tipoDocumento
+                    dni: dni
                 },
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'

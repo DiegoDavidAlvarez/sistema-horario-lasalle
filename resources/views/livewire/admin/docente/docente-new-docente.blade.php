@@ -20,31 +20,12 @@
                         <h3 class="text-xl font-semibold text-slate-800 dark:text-slate-200 mb-6">Agregar Docente</h3>
 
                         <div class="grid grid-cols-1 gap-6">
-                            <!-- Campo Tipo de Documento -->
-                            <div data-flux-field>
-                                <label for="tipo_documento" 
-                                    class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
-                                    data-flux-label>
-                                    Tipo de Documento <span class="text-red-500">*</span>
-                                </label>
-                                <select id="tipo_documento" 
-                                    name="tipo_documento"
-                                    class="w-full px-4 py-3 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200 text-slate-900 dark:text-slate-100 placeholder-slate-500 dark:placeholder-slate-400"
-                                    required data-flux-control>
-                                    <option value="DNI">DNI</option>
-                                    <option value="CE">Carné de Extranjería</option>
-                                </select>
-                                @error('tipo_documento')
-                                    <p class="mt-1 text-sm text-red-500 font-medium" data-flux-component="error">{{ $message }}</p>
-                                @enderror
-                            </div>
-
                             <!-- Campo Número de Documento (DNI) -->
                             <div data-flux-field>
                                 <label for="numero_documento" 
                                     class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1"
                                     data-flux-label>
-                                    Número de Documento <span class="text-red-500">*</span>
+                                    Número de DNI <span class="text-red-500">*</span>
                                 </label>
                                 <div class="flex gap-2">
                                     <input type="text" id="numero_documento" name="numero_documento"
@@ -133,7 +114,6 @@
                             </div>
 
                             <!-- Campos ocultos para tipo_documento_api y digito_verificador -->
-                            <input type="hidden" id="tipo_documento_api" name="tipo_documento_api">
                             <input type="hidden" id="digito_verificador" name="digito_verificador">
                         </div>
 
@@ -164,7 +144,6 @@
     $(document).ready(function () {
         $('#consultar-dni').on('click', function () {
             const dni = $('#numero_documento').val();
-            const tipoDocumento = $('#tipo_documento').val();
             if (!dni.match(/^\d{8}$/)) {
                 SwalThemed.error('Error', 'El número de documento debe tener 8 dígitos');
                 return;
@@ -175,7 +154,6 @@
                 method: 'GET',
                 data: {
                     dni: dni,
-                    tipo_documento: tipoDocumento
                 },
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}'
@@ -186,7 +164,6 @@
                     } else {
                         $('#nombres').val(data.nombres || '');
                         $('#apellidos').val(data.apellidos || '');
-                        $('#tipo_documento_api').val(data.tipo_documento_api || '');
                         $('#digito_verificador').val(data.digito_verificador || '');
                         if (!data.apellidos) {
                             console.warn(

@@ -31,7 +31,6 @@ class DocenteController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'dni' => 'required|digits:8',
-            'tipo_documento' => 'required|in:DNI,CE',
         ]);
 
         if ($validator->fails()) {
@@ -81,7 +80,6 @@ class DocenteController extends Controller
                     'numero' => $numero,
                     'nombres' => $nombres,
                     'apellidos' => $apellidos,
-                    'tipo_documento_api' => 'DNI',
                     'digito_verificador' => $datos['codVerifica'] ?? ''
                 ]);
 
@@ -105,7 +103,6 @@ class DocenteController extends Controller
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'tipo_documento' => 'required|string|in:DNI,CE|max:20',
             'numero_documento' => 'required|string|digits:8',
             'nivel_academico' => 'required|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
@@ -132,8 +129,6 @@ class DocenteController extends Controller
                         'nombres' => $request->nombres,
                         'apellidos' => $request->apellidos,
                         'email' => $request->email,
-                        'tipo_documento' => $request->tipo_documento,
-                        // 'numero_documento' no cambia porque es el que usamos para buscar
                         'nivel_academico' => $request->nivel_academico,
                         'estado' => 'activo',
                     ]);
@@ -157,7 +152,6 @@ class DocenteController extends Controller
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
                 'email' => $request->email,
-                'tipo_documento' => $request->tipo_documento,
                 'numero_documento' => $request->numero_documento,
                 'nivel_academico' => $request->nivel_academico,
                 'estado' => 'activo',
@@ -177,7 +171,6 @@ class DocenteController extends Controller
             'nombres' => 'required|string|max:255',
             'apellidos' => 'required|string|max:255',
             'email' => 'required|email|max:255|unique:docentes,email,' . $id,
-            'tipo_documento' => 'required|string|in:DNI,CE|max:20',
             'numero_documento' => 'required|string|max:8|unique:docentes,numero_documento,' . $id,
             'nivel_academico' => 'required|in:Bachiller,Técnico,Licenciado,Ingeniero,Magister,Doctor',
         ]);
@@ -191,7 +184,6 @@ class DocenteController extends Controller
                 'nombres' => $request->nombres,
                 'apellidos' => $request->apellidos,
                 'email' => $request->email,
-                'tipo_documento' => $request->tipo_documento,
                 'numero_documento' => $request->numero_documento,
                 'nivel_academico' => $request->nivel_academico,
             ]);
