@@ -1,5 +1,5 @@
 <template x-teleport="body">
-    <div x-show="isEditModuloModalOpen" 
+    <div x-show="isEditModuloOpen" 
         x-cloak 
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0" 

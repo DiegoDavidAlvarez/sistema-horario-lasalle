@@ -1,5 +1,5 @@
 <template x-teleport="body">
-    <div x-show="isEditOpen" 
+    <div x-show="isEditDocenteOpen" 
         x-cloak 
         x-transition:enter="ease-out duration-300" 
         x-transition:enter-start="opacity-0"
@@ -10,7 +10,7 @@
         class="fixed inset-0 z-50 overflow-y-auto">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" 
             aria-hidden="true"
-            @click="closeModalEdit"></div>
+            @click="closeEditDocenteModal"></div>
 
         <!-- Contenido del Modal -->
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -93,7 +93,7 @@
                     </div>
 
                     <div class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 flex justify-end space-x-3">
-                        <button type="button" @click="closeModalEdit"
+                        <button type="button" @click="closeEditDocenteModal"
                             class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium">
                             Cancelar
                         </button>

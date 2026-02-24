@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8" x-data="unidadDidacticaTable()">
+<div class="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8" x-data="unidadDidacticaList()">
     <!-- Notificaciones -->
     @if (session('success'))
         <script>
@@ -81,7 +81,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button @click.stop="openCreateModal({{ $programa->id }}, '{{ addslashes($programa->nombre) }}')"
+                            <button @click.stop="openCreateUnidadModal({{ $programa->id }}, '{{ addslashes($programa->nombre) }}')"
                                 class="flex items-center gap-2 px-3 py-1.5 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium">
                                 <i class="fas fa-plus"></i>
                                 Nueva Unidad
@@ -133,7 +133,7 @@
                                                             </button>
                                                         </form>
                                                     @else
-                                                        <button @click="openEditModal({{ $unidad->id }}, {{ $programa->id }}, '{{ addslashes($unidad->nombre) }}', {{ $unidad->creditos }}, {{ $unidad->horas_semanales }})"
+                                                        <button @click="openEditUnidadModal({{ $unidad->id }}, {{ $programa->id }}, '{{ addslashes($unidad->nombre) }}', {{ $unidad->creditos }}, {{ $unidad->horas_semanales }})"
                                                             class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-1.5 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
                                                             title="Editar unidad">
                                                             <i class="fa-solid fa-pen-to-square"></i>
@@ -216,56 +216,54 @@
         });
     }
 
-    function unidadDidacticaTable() {
+    function unidadDidacticaList() {
         return {
-            isCreateOpen: false,
-            isEditOpen: false,
-            currentProgramaId: '',
+            isCreateUnidadOpen: false,
+            isEditUnidadOpen  : false,
+
+            currentProgramaId    : '',
             currentProgramaNombre: '',
             
             // Edit fields
-            editUnidadId: null,
-            editNombre: '',
-            editCreditos: '',
+            editUnidadId      : null,
+            editNombre        : '',
+            editCreditos      : '',
             editHorasSemanales: '',
 
-            openCreateModal(programaId, programaNombre) {
-                this.currentProgramaId = programaId;
+            openCreateUnidadModal(programaId, programaNombre) {
+                this.currentProgramaId     = programaId;
                 this.currentProgramaNombre = programaNombre;
-                this.isCreateOpen = true;
+                this.isCreateUnidadOpen    = true;
+
                 document.body.classList.add('overflow-hidden');
             },
 
-            openEditModal(unidadId, programaId, nombre, creditos, horas) {
-                this.editUnidadId = unidadId;
-                this.currentProgramaId = programaId;
-                this.editNombre = nombre;
-                this.editCreditos = creditos;
-                this.editHorasSemanales = horas;
-                this.isEditOpen = true;
-                document.body.classList.add('overflow-hidden');
-            },
+            closeCreateUnidadModal() {
+                this.isCreateUnidadOpen = false;
 
-            closeModals() {
-                this.isCreateOpen = false;
-                this.isEditOpen = false;
-                this.resetForm();
                 document.body.classList.remove('overflow-hidden');
                 // Reiniciar formulario de creación
                 setTimeout(() => {
-                    const form = document.querySelector('form[action="{{ route('admin.unidad-didactica.store') }}"]');
-                    if(form) form.reset();
+                    document.querySelector('form[action="{{ route('admin.unidad-didactica.store') }}"]').reset();
                 }, 300);
             },
 
-            resetForm() {
-                this.currentProgramaId = null;
-                this.currentProgramaNombre = '';
-                this.editUnidadId = null;
-                this.editNombre = '';
-                this.editCreditos = '';
-                this.editHorasSemanales = '';
-            }
+            openEditUnidadModal(unidadId, programaId, nombre, creditos, horas) {
+                this.editUnidadId       = unidadId;
+                this.currentProgramaId  = programaId;
+                this.editNombre         = nombre;
+                this.editCreditos       = creditos;
+                this.editHorasSemanales = horas;
+                this.isEditUnidadOpen   = true;
+
+                document.body.classList.add('overflow-hidden');
+            },
+
+            closeEditUnidadModal() {
+                this.isEditUnidadOpen = false;
+
+                document.body.classList.remove('overflow-hidden');
+            },
         }
     }
 </script>

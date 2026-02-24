@@ -1,4 +1,4 @@
-<div class="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8" x-data="docenteTable()">
+<div class="min-h-screen bg-slate-100 dark:bg-slate-900 py-8 px-4 sm:px-6 lg:px-8" x-data="docenteList()">
     <!-- Notificaciones -->
     @if (session('success'))
         <script>
@@ -36,7 +36,7 @@
                     <option value="todos">Todos</option>
                 </select>
             </div>
-            <button @click="openModalCreate()"
+            <button @click="openCreateDocenteModal()"
                 class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm w-full sm:w-auto justify-center">
                 <i class="fas fa-plus"></i>
                 Agregar docente
@@ -110,7 +110,7 @@
                                         <!-- Botón Editar -->
                                         <button class="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 p-2 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/50 transition-colors"
                                             title="Editar docente"
-                                            @click="openModalEdit({{ $docente->id }},
+                                            @click="openEditDocenteModal({{ $docente->id }},
                                             '{{ addslashes($docente->nombres) }}',
                                             '{{ addslashes($docente->apellidos) }}',
                                             '{{ addslashes($docente->email) }}',
@@ -219,83 +219,52 @@
     }
 
     // Componente Alpine.js para la tabla
-    function docenteTable() {
+    function docenteList() {
         return {
-            isEditOpen: false,
-            isCreateOpen: false,
-            currentId: null,
-            currentNombres: '',
-            currentApellidos: '',
-            currentEmail: '',
-            currentDni: '',
+            isEditDocenteOpen  : false,
+            isCreateDocenteOpen: false,
+
+            currentId            : null,
+            currentNombres       : '',
+            currentApellidos     : '',
+            currentEmail         : '',
+            currentDni           : '',
             currentNivelAcademico: '',
+            
+            openCreateDocenteModal() {
+                this.isCreateDocenteOpen = true;
 
-            openModalEdit(id, nombres, apellidos, email, dni, nivel_academico) {
-                this.currentId = id;
-                this.currentNombres = nombres;
-                this.currentApellidos = apellidos;
-                this.currentEmail = email;
-                this.currentDni = dni;
-                this.currentNivelAcademico = nivel_academico;
-                this.isEditOpen = true;
                 document.body.classList.add('overflow-hidden');
             },
 
-            closeModalEdit() {
-                this.isEditOpen = false;
-                document.body.classList.remove('overflow-hidden');
-            },
+            closeCreateDocenteModal() {
+                this.isCreateDocenteOpen = false;
 
-            openModalCreate() {
-                this.isCreateOpen = true;
-                document.body.classList.add('overflow-hidden');
-            },
-
-            closeModalCreate() {
-                this.isCreateOpen = false;
                 document.body.classList.remove('overflow-hidden');
-                // Reiniciar formulario (esperar a que cierre la transición)
+
                 setTimeout(() => {
                     document.querySelector('form[action="{{ route('admin.docente.store') }}"]').reset();
                 }, 300);
             },
+            
+            openEditDocenteModal(id, nombres, apellidos, email, dni, nivel_academico) {
+                this.currentId             = id;
+                this.currentNombres        = nombres;
+                this.currentApellidos      = apellidos;
+                this.currentEmail          = email;
+                this.currentDni            = dni;
+                this.currentNivelAcademico = nivel_academico;
+                this.isEditDocenteOpen     = true;
+
+                document.body.classList.add('overflow-hidden');
+            },
+
+            closeEditDocenteModal() {
+                this.isEditDocenteOpen = false;
+
+                document.body.classList.remove('overflow-hidden');
+            },
+
         }
     }
-</script>
-<script>
-    $(document).ready(function () {
-        $('#consultar-dni-edit').on('click', function () {
-            const dni = $('#edit-dni').val();
-
-            if (!dni || !dni.match(/^\d{8}$/)) {
-                SwalThemed.error('Error', 'El número de documento debe tener 8 dígitos');
-                return;
-            }
-
-            $.ajax({
-                url: '{{ route('admin.docente.consultar-dni') }}',
-                method: 'GET',
-                data: {
-                    dni: dni
-                },
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function (data) {
-                    if (data.error) {
-                        SwalThemed.error('Error', data.error);
-                    } else {
-                        // Actualizar campos y disparar evento input para Alpine
-                        $('#edit-nombres').val(data.nombres || '').trigger('input');
-                        $('#edit-apellidos').val(data.apellidos || '').trigger('input');
-
-                        SwalThemed.success('¡Éxito!', 'Datos del documento obtenidos correctamente');
-                    }
-                },
-                error: function (xhr) {
-                    SwalThemed.error('Error', 'Error al consultar el documento: ' + (xhr.responseJSON?.error || 'No se pudo conectar con la API'));
-                }
-            });
-        });
-    });
 </script>

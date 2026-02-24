@@ -34,6 +34,11 @@
                     <option value="todos">Todos</option>
                 </select>
             </div>
+            <button @click="openCreateProgramaModal()"
+                class="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors duration-200 font-medium text-sm w-full sm:w-auto justify-center">
+                <i class="fas fa-plus"></i>
+                Agregar programa de estudios
+            </button>
         </div>
 
         <div class="p-6 space-y-4">
@@ -43,11 +48,11 @@
                     $modulosExistentes = $programa->modulos->pluck('numero_modulo')->toArray();
                 @endphp
 
-                <div
+                <div x-data="{ expanded: false }"
                     class="bg-slate-50 dark:bg-slate-700/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 transition-all duration-200 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-500">
                     <!-- Encabezado del Programa -->
                     <div class="p-6 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
-                        @click="toggleProgram({{ $programa->id }})">
+                        @click="expanded = !expanded">
                         <div class="flex justify-between items-start">
                             <div class="flex-1">
                                 <div class="flex items-center gap-3 mb-2">
@@ -83,28 +88,22 @@
                                     </form>
                                 @else
                                     <button
-                                        @click="openEditModal('{{ $programa->id }}', '{{ addslashes($programa->nombre) }}', '{{ addslashes($programa->abreviatura ?? '') }}')"
+                                        @click="openEditProgramaModal('{{ $programa->id }}', '{{ addslashes($programa->nombre) }}', '{{ addslashes($programa->abreviatura ?? '') }}')"
                                         class="p-2 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 rounded-lg transition-colors"
                                         title="Editar programa">
                                         <i class="fa-solid fa-pen-to-square"></i>
                                     </button>
-                                    <button onclick="confirmDelete('{{ $programa->id }}')"
+                                    <button onclick="confirmDeletePrograma('{{ $programa->id }}')"
                                         class="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg transition-colors"
                                         title="Eliminar programa">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
                                 @endif
-                                <button @click="toggleProgram({{ $programa->id }})"
+                                <button @click="expanded = !expanded"
                                     class="p-2 text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
                                     title="Ver módulos">
-                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                        class="h-5 w-5 transition-transform duration-200"
-                                        :class="{ 'rotate-180': expandedPrograms.includes({{ $programa->id }}) }"
-                                        viewBox="0 0 20 20" fill="currentColor">
-                                        <path fill-rule="evenodd"
-                                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    <i class="fa-solid fa-angle-down transition-transform duration-200"
+                                        :class="{ 'rotate-180': expanded }"></i>
                                 </button>
                             </div>
 
@@ -118,21 +117,16 @@
                         </div>
 
                         <!-- Sección de Módulos (Expandible) -->
-                        <div x-show="expandedPrograms.includes({{ $programa->id }})" x-collapse class="mt-6">
+                        <div x-show="expanded" x-collapse class="mt-6">
                             <div class="border-t border-slate-200 dark:border-slate-700 pt-6">
                                 <div class="flex justify-between items-center mb-4">
                                     <h3 class="text-lg font-semibold text-slate-800 dark:text-slate-200">
                                         Módulos ({{ $modulosCount }})
                                     </h3>
                                     <!-- Botón para agregar módulo -->
-                                    <button @click.stop="openModuloModal({{ $programa->id }}, {{ json_encode($modulosExistentes) }})"
+                                    <button @click.stop="openCreateModuloModal({{ $programa->id }}, {{ json_encode($modulosExistentes) }})"
                                         class="px-4 py-2 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center gap-2">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20"
-                                            fill="currentColor">
-                                            <path fill-rule="evenodd"
-                                                d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"
-                                                clip-rule="evenodd" />
-                                        </svg>
+                                        <i class="fas fa-plus"></i>
                                         Agregar Módulo
                                     </button>
                                 </div>
@@ -158,7 +152,7 @@
                                                     </p>
                                                 </div>
                                             </div>
-                                            <div class="flex gap-2">
+                                            <div class="flex gap-2" @click.stop>
                                                 <button
                                                     @click="openEditModuloModal('{{ $modulo->id }}', '{{ addslashes($modulo->nombre) }}', {{ $modulo->numero_modulo }}, {{ json_encode($modulosExistentes) }})"
                                                     class="p-1 text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 rounded transition-colors"
@@ -219,6 +213,9 @@
         @endif
     </div>
 
+    <!-- Modal para Crear Programa -->
+    @include('livewire.admin.programa-estudio.programa-estudio-new-programa')
+
     <!-- Modal para Editar Programa -->
     @include('livewire.admin.programa-estudio.programa-estudio-edit-programa')
 
@@ -231,7 +228,7 @@
 
 <script>
     // Función para confirmar eliminación de programa
-    function confirmDelete(id) {
+    function confirmDeletePrograma(id) {
         SwalThemed.confirm(
             '¿Eliminar programa de estudio?',
             'Podrás restaurar este registro desde el filtro de inactivos.'
@@ -257,46 +254,44 @@
     // Componente Alpine.js para la lista de programas
     function programaList() {
         return {
-            expandedPrograms: [],
-            isEditModalOpen: false,
-            isModuloModalOpen: false,
-            isEditModuloModalOpen: false,
-            currentId: null,
-            currentNombre: '',
-            currentAbreviatura: '',
-            currentProgramaId: null,
-            nextModuleNumber: 1,
-            editModuloId: null,
-            editModuloNombre: '',
-            editModuloNumero: null,
+            isEditProgramaOpen      : false,
+            isEditModuloOpen        : false,
+            isCreateProgramaOpen    : false,
+            isCreateModuloOpen      : false,
+
+            currentId               : null,
+            currentNombre           : '',
+            currentAbreviatura      : '',
+            currentProgramaId       : null,
+
+            nextModuloNumber        : 1,
+
+            editModuloId            : null,
+            editModuloNombre        : '',
+            editModuloNumero        : null,
             editModuloOriginalNumero: null,
-            editModuloExisting: [],
+            editModuloExisting      : [],
 
-            toggleProgram(programaId) {
-                const index = this.expandedPrograms.indexOf(programaId);
-                if (index > -1) {
-                    this.expandedPrograms.splice(index, 1);
-                } else {
-                    this.expandedPrograms.push(programaId);
-                }
-            },
+            openCreateProgramaModal() {
+                this.isCreateProgramaOpen = true;
 
-            openEditModal(id, nombre, abreviatura) {
-                this.currentId = id;
-                this.currentNombre = nombre;
-                this.currentAbreviatura = abreviatura;
-                this.isEditModalOpen = true;
                 document.body.classList.add('overflow-hidden');
             },
 
-            closeEditModal() {
-                this.isEditModalOpen = false;
+            closeCreateProgramaModal() {
+                this.isCreateProgramaOpen = false;
+
                 document.body.classList.remove('overflow-hidden');
+
+                setTimeout(() => {
+                    document.querySelector('form[action="{{ route('admin.programa-estudio.store') }}"]').reset();
+                }, 300);
             },
 
-            openModuloModal(programaId, existingModulos) {
+            openCreateModuloModal(programaId, existingModulos) {
                 this.currentProgramaId = programaId;
-                this.isModuloModalOpen = true;
+                this.isCreateModuloOpen  = true;
+
                 document.body.classList.add('overflow-hidden');
                 
                 // Pasar los módulos existentes al modal
@@ -306,45 +301,57 @@
                         const modalData = Alpine.$data(modalElement);
                         if (modalData) {
                             modalData.existingModulos = existingModulos;
-                            modalData.selectedModulo = null;
+                            modalData.selectedModulo  = null;
                         }
                     }
                 });
             },
 
-            closeModuloModal() {
-                this.isModuloModalOpen = false;
+            closeCreateModuloModal() {
+                this.isCreateModuloOpen = false;
                 document.body.classList.remove('overflow-hidden');
-                // Reiniciar formulario
+                // Resetear el selectedModulo del x-data interno del modal
                 setTimeout(() => {
-                    const form = document.querySelector('form[action="{{ route('admin.modulos.store') }}"]');
-                    if(form) form.reset();
+                    document.querySelector('form[action="{{ route('admin.modulos.store') }}"]').reset();
                     
-                    // Resetear estado de Alpine del modal
                     const modalElement = document.querySelector('[x-data*="selectedModulo"]');
-                    if (modalElement) {
-                        const modalData = Alpine.$data(modalElement);
-                        if (modalData) {
-                            modalData.selectedModulo = null;
-                        }
-                    }
+                    if (modalElement) Alpine.$data(modalElement).selectedModulo = null;
                 }, 300);
             },
 
+            openEditProgramaModal(id, nombre, abreviatura) {
+                this.currentId          = id;
+                this.currentNombre      = nombre;
+                this.currentAbreviatura = abreviatura;
+                this.isEditProgramaOpen = true;
+
+                document.body.classList.add('overflow-hidden');
+            },
+
+            closeEditProgramaModal() {
+                this.isEditProgramaOpen = false;
+
+                document.body.classList.remove('overflow-hidden');
+            },
+
+
             openEditModuloModal(id, nombre, numero, existingModulos) {
-                this.editModuloId = id;
-                this.editModuloNombre = nombre;
-                this.editModuloNumero = numero;
+                this.editModuloId             = id;
+                this.editModuloNombre         = nombre;
+                this.editModuloNumero         = numero;
                 this.editModuloOriginalNumero = numero;
-                this.editModuloExisting = existingModulos;
-                this.isEditModuloModalOpen = true;
+                this.editModuloExisting       = existingModulos;
+                this.isEditModuloOpen    = true;
+
                 document.body.classList.add('overflow-hidden');
             },
 
             closeEditModuloModal() {
-                this.isEditModuloModalOpen = false;
+                this.isEditModuloOpen = false;
+
                 document.body.classList.remove('overflow-hidden');
-            }
+            },
+
         }
     }
 </script>

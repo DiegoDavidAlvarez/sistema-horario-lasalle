@@ -1,5 +1,5 @@
 <template x-teleport="body">
-    <div x-show="isModuloModalOpen" 
+    <div x-show="isCreateModuloOpen" 
         x-cloak 
         x-transition:enter="ease-out duration-300"
         x-transition:enter-start="opacity-0" 
@@ -8,9 +8,9 @@
         x-transition:leave-start="opacity-100"
         x-transition:leave-end="opacity-0" 
         class="fixed inset-0 z-50 overflow-y-auto"
-        @keydown.escape.window="closeModuloModal">
+        @keydown.escape.window="closeCreateModuloModal">
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" aria-hidden="true"
-            @click="closeModuloModal"></div>
+            @click="closeCreateModuloModal"></div>
 
         <!-- Contenido del Modal -->
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -66,7 +66,7 @@
                                                 <i class="fa-solid fa-check"></i>
                                                 <span>Seleccionado</span>
                                             </span>
-                                            <span class="text-xs font-semibold flex items-center gap-1" 
+                                            <span class="text-xs font-semibold flex items-center gap-1 whitespace-nowrap" 
                                                 x-show="existingModulos.includes(num)">
                                                 <i class="fa-solid fa-lock"></i>
                                                 No disponible
@@ -120,7 +120,7 @@
 
                     <div
                         class="px-6 py-4 bg-slate-50 dark:bg-slate-700 border-t border-slate-200 dark:border-slate-600 flex justify-end space-x-3">
-                        <button type="button" @click="closeModuloModal"
+                        <button type="button" @click="closeCreateModuloModal"
                             class="px-4 py-2 text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-slate-200 font-medium transition-colors">
                             Cancelar
                         </button>
