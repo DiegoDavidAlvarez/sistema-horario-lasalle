@@ -1,8 +1,14 @@
 <template x-teleport="body">
     <div x-show="isCreateUnidadOpen" x-cloak 
-        x-transition:enter="ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" 
-        x-transition:leave="ease-in duration-200" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+        x-transition:enter="ease-out duration-300" 
+        x-transition:enter-start="opacity-0" 
+        x-transition:enter-end="opacity-100" 
+        x-transition:leave="ease-in duration-200" 
+        x-transition:leave-start="opacity-100" 
+        x-transition:leave-end="opacity-0"
         class="fixed inset-0 z-50 overflow-y-auto">
+        
+        {{-- Fondo oscuro que al hacer click cierra el modal --}}
         <div class="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity" @click="closeCreateUnidadModal"></div>
 
         <div class="flex items-center justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
@@ -20,21 +26,28 @@
                         <div class="mb-4">
                             <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Nombre de la Unidad <span class="text-red-500">*</span></label>
                             <input type="text" name="nombre" required
-                                class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                placeholder="Ej: Lógica de Programación">
                         </div>
 
                         <div class="grid grid-cols-2 gap-4">
                             <!-- Créditos -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Créditos <span class="text-red-500">*</span></label>
-                                <input type="number" name="creditos" min="1" required
-                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <input type="text" name="creditos" required
+                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Ej: 3"
+                                    pattern="\d{1}" maxlength="1"
+                                    oninput="this.value = this.value.replace(/[^1-9]/g, '')">
                             </div>
                             <!-- Horas -->
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Horas Semanales <span class="text-red-500">*</span></label>
-                                <input type="number" name="horas_semanales" min="1" required
-                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                <input type="text" name="horas_semanales" required
+                                    class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    placeholder="Ej: 5"
+                                    pattern="\d{1}" maxlength="1"
+                                    oninput="this.value = this.value.replace(/[^1-9]/g, '')">
                             </div>
                         </div>
                     </div>

@@ -113,7 +113,7 @@
                             </label>
                             <input type="text" id="edit_modulo_nombre" name="nombre" x-model="editModuloNombre"
                                 class="w-full px-4 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-600 rounded-lg text-slate-800 dark:text-slate-200 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                placeholder="Ej: Desarrollo de Software Empresarial" required maxlength="200">
+                                required maxlength="200">
                         </div>
                     </div>
 
