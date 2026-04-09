@@ -58,7 +58,7 @@ class ModuloController extends Controller
         }
     }
 
-    public function update(Request $request, Modulo $modulo)
+    public function update(Request $request, string $id)
     {
 
         $validator = Validator::make($request->all(), [
@@ -69,10 +69,12 @@ class ModuloController extends Controller
         try {
             $validator->validate();
 
+            $modulo = Modulo::findOrFail($id);
+
             // Verificar si el nuevo número de módulo ya está en uso por otro módulo del mismo programa
             $existe = Modulo::where('programa_estudio_id', $modulo->programa_estudio_id)
                 ->where('numero_modulo', $request->numero_modulo)
-                ->where('id', '!=', $modulo->id)
+                ->where('id', '!=', $id)
                 ->exists();
 
             if ($existe) {
@@ -81,7 +83,7 @@ class ModuloController extends Controller
                     ->withInput();
             }
 
-            $modulo->update([
+            Modulo::where('id', $id)->update([
                 'nombre' => $request->nombre,
                 'numero_modulo' => $request->numero_modulo,
             ]);
@@ -94,8 +96,9 @@ class ModuloController extends Controller
         }
     }
 
-    public function destroy(Modulo $modulo)
+    public function destroy(string $id)
     {
+        $modulo = Modulo::findOrFail($id);
         $programaId = $modulo->programa_estudio_id;
         $numeroEliminado = $modulo->numero_modulo;
 
@@ -108,8 +111,8 @@ class ModuloController extends Controller
             ->orderBy('numero_modulo', 'asc')
             ->get();
 
-        foreach ($modulosRestantes as $index => $modulo) {
-            $modulo->update(['numero_modulo' => $numeroEliminado + $index]);
+        foreach ($modulosRestantes as $index => $item) {
+            Modulo::where('id', $item->id)->update(['numero_modulo' => $numeroEliminado + $index]);
         }
 
         return redirect()->route('admin.programa-estudio.index')

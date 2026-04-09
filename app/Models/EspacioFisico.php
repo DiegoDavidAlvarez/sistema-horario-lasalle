@@ -5,17 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Semestre extends Model
+class EspacioFisico extends Model
 {
     use HasFactory;
 
-    protected $table = 'semestres';
+    protected $table = 'espacios_fisicos';
+
     protected $fillable = [
-        'numero',
+        'nombre',
+        'estado'
     ];
 
-    public function mallaCurricular()
+    public function horario()
     {
-        return $this->hasMany(MallaCurricular::class, 'semestre_id');
+        return $this->hasMany(Horario::class);
     }
 }

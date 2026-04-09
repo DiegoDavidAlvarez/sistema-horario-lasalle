@@ -11,21 +11,19 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('unidades_didacticas', function (Blueprint $table) {
+        Schema::create('espacios_fisicos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('programa_estudio_id')
-                ->constrained('programas_estudio')
-                ->onDelete('cascade');
-            $table->string('nombre', 255);
-            $table->integer('creditos');
-            $table->integer('horas_semanales');
+            $table->string('nombre');
             $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::dropIfExists('unidades_didacticas');
+        Schema::dropIfExists('espacios_fisicos');
     }
 };

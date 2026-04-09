@@ -11,18 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('plan_estudios', function (Blueprint $table) {
+        Schema::create('mallas_curriculares', function (Blueprint $table) {
             $table->id();
             $table->foreignId('modulo_id')
                 ->constrained('modulos')
                 ->onDelete('cascade');
             $table->foreignId('unidad_didactica_id')
-                ->constrained('unidad_didacticas')
+                ->constrained('unidades_didacticas')
                 ->onDelete('cascade');
             $table->foreignId('semestre_id')
                 ->constrained('semestres')
                 ->onDelete('cascade');
-            $table->enum('estado', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
         });
     }
@@ -32,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('plan_estudios');
+        Schema::dropIfExists('mallas_curriculares');
     }
 };

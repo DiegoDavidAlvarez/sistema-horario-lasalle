@@ -48,7 +48,12 @@
                     $modulosExistentes = $programa->modulos->pluck('numero_modulo')->toArray();
                 @endphp
 
-                <div x-data="{ expanded: false }"
+                <div x-data="{ 
+                        expanded: sessionStorage.getItem('programa-expanded-{{ $programa->id }}') === 'true',
+                        init() {
+                            this.$watch('expanded', val => sessionStorage.setItem('programa-expanded-{{ $programa->id }}', val))
+                        }
+                    }"
                     class="bg-slate-50 dark:bg-slate-700/50 rounded-xl overflow-hidden border border-slate-200 dark:border-slate-600 transition-all duration-200 hover:shadow-lg hover:border-slate-300 dark:hover:border-slate-500">
                     <!-- Encabezado del Programa -->
                     <div class="p-6 cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"

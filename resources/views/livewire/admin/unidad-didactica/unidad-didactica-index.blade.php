@@ -62,7 +62,12 @@
         <div class="p-6 space-y-6">
             @forelse ($programas as $programa)
                 <div class="bg-slate-50 dark:bg-slate-700/30 rounded-xl border border-slate-200 dark:border-slate-600 overflow-hidden"
-                    x-data="{ expanded: false }">
+                    x-data="{ 
+                        expanded: sessionStorage.getItem('unidad-expanded-{{ $programa->id }}') === 'true',
+                        init() {
+                            this.$watch('expanded', val => sessionStorage.setItem('unidad-expanded-{{ $programa->id }}', val))
+                        }
+                    }">
                     <!-- Cabecera del Programa -->
                     <div class="p-4 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-600 flex justify-between items-center cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors"
                         @click="expanded = !expanded">

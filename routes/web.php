@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Admin\DocenteController;
 use App\Http\Controllers\Admin\ModuloController;
-use App\Http\Controllers\Admin\PlanEstudioController;
 use App\Http\Controllers\Admin\ProgramaEstudioController;
 use App\Http\Controllers\Admin\UnidadDidacticaController;
+use App\Http\Controllers\Admin\MallaCurricularController;
+use App\Http\Controllers\Admin\EspacioFisicoController;
 use GuzzleHttp\Middleware;
 use Illuminate\Support\Facades\Route;
 use Laravel\Fortify\Features;
@@ -62,9 +63,13 @@ Route::prefix('admin')->middleware('auth')->group(function () {
     Route::put('unidad-didactica/{id}/restore', [UnidadDidacticaController::class, 'restore'])
         ->name('admin.unidad-didactica.restore');
 
-    Route::resource('plan-estudio', PlanEstudioController::class)
+    Route::resource('malla-curricular', MallaCurricularController::class)
         ->only(['index', 'store', 'update', 'destroy'])
-        ->names('admin.plan-estudio');
-    Route::put('plan-estudio/{id}/restore', [PlanEstudioController::class, 'restore'])
-        ->name('admin.plan-estudio.restore');
+        ->names('admin.malla-curricular');
+
+    Route::resource('espacio-fisico', EspacioFisicoController::class)
+        ->only(['index', 'store', 'update', 'destroy'])
+        ->names('admin.espacio-fisico');
+    Route::put('espacio-fisico/{id}/restore', [EspacioFisicoController::class, 'restore'])
+        ->name('admin.espacio-fisico.restore');
 });

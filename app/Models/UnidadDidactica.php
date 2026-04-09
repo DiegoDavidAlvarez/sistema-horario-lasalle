@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class UnidadDidactica extends Model
 {
+    protected $table = 'unidades_didacticas';
+    
     protected $fillable = [
         'programa_estudio_id',
         'nombre',
@@ -19,12 +21,9 @@ class UnidadDidactica extends Model
         return $this->belongsTo(ProgramaEstudio::class, 'programa_estudio_id');
     }
 
-    /**
-     * Relación con los planes de estudio
-     */
-    public function planesEstudio()
+    public function mallaCurricular()
     {
-        return $this->hasMany(PlanEstudios::class, 'unidad_didactica_id');
+        return $this->hasMany(MallaCurricular::class, 'unidad_didactica_id');
     }
 
 }

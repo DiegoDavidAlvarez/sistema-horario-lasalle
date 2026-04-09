@@ -47,12 +47,19 @@ class DatabaseSeeder extends Seeder
         Permission::create(['name' => 'admin.modulos.update'])->syncRoles([$role]);
         Permission::create(['name' => 'admin.modulos.destroy'])->syncRoles([$role]);
 
-        // Permisos - Plan Estudio
-        Permission::create(['name' => 'admin.plan-estudio.index'])->syncRoles([$role]);
-        Permission::create(['name' => 'admin.plan-estudio.store'])->syncRoles([$role]);
-        Permission::create(['name' => 'admin.plan-estudio.update'])->syncRoles([$role]);
-        Permission::create(['name' => 'admin.plan-estudio.destroy'])->syncRoles([$role]);
-        Permission::create(['name' => 'admin.plan-estudio.restore'])->syncRoles([$role]);
+        // Permisos - Malla Curricular
+        Permission::create(['name' => 'admin.malla-curricular.index'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.malla-curricular.store'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.malla-curricular.update'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.malla-curricular.destroy'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.malla-curricular.restore'])->syncRoles([$role]);
+
+        // Permisos - Espacio Físico
+        Permission::create(['name' => 'admin.espacio-fisico.index'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.espacio-fisico.store'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.espacio-fisico.update'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.espacio-fisico.destroy'])->syncRoles([$role]);
+        Permission::create(['name' => 'admin.espacio-fisico.restore'])->syncRoles([$role]);
 
         // Creación de usuario administrador
         User::factory()->create([

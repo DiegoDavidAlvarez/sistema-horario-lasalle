@@ -57,7 +57,12 @@
                     </tr>
                 </thead>
                 @forelse ($docentes as $docente) {{-- forelse es igual que foreach pero con excepcion @empty --}}
-                    <tbody x-data="{ expanded: false }"
+                    <tbody x-data="{ 
+                            expanded: sessionStorage.getItem('docente-expanded-{{ $docente->id }}') === 'true',
+                            init() {
+                                this.$watch('expanded', val => sessionStorage.setItem('docente-expanded-{{ $docente->id }}', val))
+                            }
+                        }"
                         class="border-b border-slate-200 dark:border-slate-700 group">
                         {{-- Fila principal de la tabla --}}
                         <tr class="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors cursor-pointer"

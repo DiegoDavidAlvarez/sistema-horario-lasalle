@@ -24,11 +24,8 @@ class Modulo extends Model
         return $this->belongsTo(ProgramaEstudio::class, 'programa_estudio_id');
     }
 
-    /**
-     * Relación con los planes de estudio (1:N)
-     */
-    public function planesEstudio()
+    public function mallaCurricular()
     {
-        return $this->hasMany(PlanEstudios::class, 'modulo_id');
+        return $this->hasMany(MallaCurricular::class, 'modulo_id');
     }
 }
