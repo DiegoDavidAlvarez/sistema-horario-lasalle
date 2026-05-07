@@ -100,9 +100,10 @@
                                                 @keydown.arrow-down.prevent="navigateDropdown('down')"
                                                 @keydown.arrow-up.prevent="navigateDropdown('up')"
                                                 @keydown.enter.prevent="selectHighlighted()"
-                                                placeholder="Buscar unidad didáctica por nombre..."
+                                                :disabled="!selectedSemestreId"
+                                                :placeholder="selectedSemestreId ? 'Buscar unidad didáctica por nombre...' : 'Seleccione un semestre primero...'"
                                                 autocomplete="off"
-                                                class="w-full pl-10 pr-4 py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700/50 text-slate-800 dark:text-slate-200 rounded-xl text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                                                class="w-full pl-10 pr-4 py-2.5 border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700/50 text-slate-800 dark:text-slate-200 rounded-xl text-sm placeholder:text-slate-400 dark:placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200 disabled:bg-slate-100 dark:disabled:bg-slate-800/50 disabled:cursor-not-allowed disabled:text-slate-400 dark:disabled:text-slate-500"
                                                 x-ref="unitSearchInput">
                                             <button type="button"
                                                 x-show="unitSearchQuery.length > 0"

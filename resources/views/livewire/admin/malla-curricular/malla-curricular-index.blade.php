@@ -278,7 +278,8 @@
 
                 return units;
             },
-
+            
+            // Para mostrar las unidades seleccionadas para guardar
             get selectedCount() {
                 return this.selectedUnits.length;
             },

@@ -72,6 +72,7 @@ class DatabaseSeeder extends Seeder
         // Llamada a otros seeders
         $this->call([
             SemestreSeeder::class,
+            BloqueTiempoSeeder::class,
         ]);
     }
 }
